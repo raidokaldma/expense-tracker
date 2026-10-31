@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import type { AccountId, CategoryId } from '../../shared/types';
 import { amountCloseness, hint, suggestCategories } from './suggest';
 import { tx } from './testData';
-import type { AccountId, CategoryId } from './types';
 
-const cat = (id: string) => id as CategoryId;
+function cat(id: string) {
+  return id as CategoryId;
+}
 const bank = 'acc-bank' as AccountId;
 const card = 'acc-card' as AccountId;
 

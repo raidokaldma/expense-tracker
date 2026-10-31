@@ -1,8 +1,9 @@
 import { expect, type Page, test } from '@playwright/test';
 import { mod, openWithDemo, resetData } from './helpers';
 
-const activeCell = (page: Page) =>
-  page.getByRole('grid', { name: 'Transactions' }).getAttribute('aria-activedescendant');
+function activeCell(page: Page) {
+  return page.getByRole('grid', { name: 'Transactions' }).getAttribute('aria-activedescendant');
+}
 
 test.beforeEach(({ page }) => resetData(page));
 

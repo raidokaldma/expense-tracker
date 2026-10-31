@@ -4,7 +4,6 @@ import { type RefObject, useLayoutEffect } from 'react';
 const ROW_NUMBER_WIDTH = 56;
 
 interface Options {
-  /** The grid's scroll area. */
   scrollRef: RefObject<HTMLDivElement | null>;
   /** The sticky column titles, whose cells give each column's position. */
   headRef: RefObject<HTMLDivElement | null>;

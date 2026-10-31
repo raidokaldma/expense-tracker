@@ -1,12 +1,13 @@
+import { formatLocal, localDateKey, toLocal } from '../../shared/time';
+import type { Transaction } from '../../shared/types';
 import type { Lookup } from './lookup';
 import { amountMatches } from './money';
-import { formatLocal, localDateKey, toLocal } from './time';
-import type { Transaction } from './types';
 
 export const SEARCH_LIMIT = 50;
 
-const recentFirst = (a: Transaction, b: Transaction) =>
-  (b.addedAt || b.occurredAt || '').localeCompare(a.addedAt || a.occurredAt || '');
+function recentFirst(a: Transaction, b: Transaction) {
+  return (b.addedAt || b.occurredAt || '').localeCompare(a.addedAt || a.occurredAt || '');
+}
 
 /**
  * Find (⌘K): every word must match some value, the bank's transaction id included. Numbers also match amounts

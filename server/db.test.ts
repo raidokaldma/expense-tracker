@@ -4,7 +4,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { MIGRATIONS_DIR, migrate, openDatabase } from './db.ts';
 
-const tempDir = () => mkdtempSync(join(tmpdir(), 'expenses-'));
+function tempDir() {
+  return mkdtempSync(join(tmpdir(), 'expenses-'));
+}
 
 /** A copy of the real migrations plus extra ones, in a temporary directory. */
 function migrationsWith(extra: Record<string, string>) {
@@ -18,8 +20,9 @@ function migrationsWith(extra: Record<string, string>) {
 const latest = readdirSync(MIGRATIONS_DIR).length;
 const next = String(latest + 1).padStart(3, '0');
 
-const version = (db: ReturnType<typeof openDatabase>) =>
-  (db.prepare('PRAGMA user_version').get() as { user_version: number }).user_version;
+function version(db: ReturnType<typeof openDatabase>) {
+  return (db.prepare('PRAGMA user_version').get() as { user_version: number }).user_version;
+}
 
 describe('migrations', () => {
   it('builds a new database and does nothing the second time', () => {

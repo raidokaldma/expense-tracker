@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
+import { formatTimestamp } from '../../../shared/time';
 import { cx } from '../../components/cx';
 import { Icon } from '../../components/icons';
 import { formatAmount } from '../../model/money';
 import { SEARCH_LIMIT, searchTransactions } from '../../model/search';
-import { formatTimestamp } from '../../model/time';
 import { useStore } from '../../store/store';
 import { MobileHeader } from './MobileHeader';
-import s from './mobile.module.css';
+import s from './MobileTransactionsPage.module.css';
+import mobile from './mobile.module.css';
 import { setMobileView, useMobileView } from './mobileView';
 
 /** Read-only search over all transactions, with the same matching as Find (⌘K). */
@@ -19,7 +20,7 @@ export function MobileTransactionsPage() {
   return (
     <>
       <MobileHeader />
-      <main className={s.main}>
+      <main className={mobile.main}>
         <label className={s.search}>
           <Icon name="search" size={18} />
           <input
@@ -32,17 +33,17 @@ export function MobileTransactionsPage() {
             spellCheck={false}
           />
         </label>
-        <ul className={s.list}>
+        <ul className={mobile.list}>
           {results.map((t) => (
-            <li key={t.id} className={s.item}>
-              <div className={s.line}>
-                <span className={s.name}>{t.counterparty || '(no recipient)'}</span>
+            <li key={t.id}>
+              <div className={mobile.line}>
+                <span className={mobile.name}>{t.counterparty || '(no recipient)'}</span>
                 <span className={cx('mono', t.amount != null && t.amount > 0 && 'pos')}>
                   {t.amount == null ? '—' : formatAmount(t.amount)}
                 </span>
               </div>
-              {t.description && <div className={s.desc}>{t.description}</div>}
-              <div className={s.meta}>
+              {t.description && <div className={mobile.desc}>{t.description}</div>}
+              <div className={mobile.meta}>
                 {[
                   t.occurredAt && formatTimestamp(t.occurredAt),
                   lookup.categoryName(t.categoryId) || 'No category',
@@ -54,8 +55,8 @@ export function MobileTransactionsPage() {
             </li>
           ))}
         </ul>
-        {results.length === 0 && <p className={s.none}>No matching transactions.</p>}
-        {results.length === SEARCH_LIMIT && <p className={s.none}>First {SEARCH_LIMIT} shown</p>}
+        {results.length === 0 && <p className={mobile.none}>No matching transactions.</p>}
+        {results.length === SEARCH_LIMIT && <p className={mobile.none}>First {SEARCH_LIMIT} shown</p>}
       </main>
     </>
   );

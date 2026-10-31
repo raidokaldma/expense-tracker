@@ -6,15 +6,19 @@ export interface Cell {
   col: string;
 }
 
-export const cellId = (cell: Cell) => `${cell.key}|${cell.col}`;
+export function cellId(cell: Cell) {
+  return `${cell.key}|${cell.col}`;
+}
 
-export const cellFromId = (id: string): Cell => {
+export function cellFromId(id: string): Cell {
   const at = id.lastIndexOf('|');
   return { key: id.slice(0, at), col: id.slice(at + 1) };
-};
+}
 
 /** The keys of the rows that the cells are on. */
-export const rowKeys = (ids: Iterable<string>) => new Set([...ids].map((id) => cellFromId(id).key));
+export function rowKeys(ids: Iterable<string>) {
+  return new Set([...ids].map((id) => cellFromId(id).key));
+}
 
 /**
  * Selected cells beyond the active one. Null selects the active cell only. Otherwise the cells picked with ⌘+click,
@@ -25,8 +29,9 @@ export type Selection = { picked: ReadonlySet<string>; anchor: Cell | null } | n
 /** How a move or click changes the selection: start over, extend from the anchor (Shift), add or remove (⌘). */
 export type SelectHow = 'only' | 'extend' | 'toggle';
 
-export const selectHow = (e: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean }): SelectHow =>
-  e.shiftKey ? 'extend' : isMod(e) ? 'toggle' : 'only';
+export function selectHow(e: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean }): SelectHow {
+  return e.shiftKey ? 'extend' : isMod(e) ? 'toggle' : 'only';
+}
 
 /** Every cell between two cells, both included; the order of `keys` and `cols` decides what is between. */
 function rectangle(a: Cell, b: Cell, keys: string[], cols: string[]): string[] {

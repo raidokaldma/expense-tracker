@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router';
 import { cx } from '../../components/cx';
-import s from './mobile.module.css';
+import s from './MobileHeader.module.css';
 
-const tab = ({ isActive }: { isActive: boolean }) => cx(s.tab, isActive && s.on);
+function tab({ isActive }: { isActive: boolean }) {
+  return cx(s.tab, isActive && s.current);
+}
 
 export function MobileHeader() {
   return (

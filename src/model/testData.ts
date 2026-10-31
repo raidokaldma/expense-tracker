@@ -1,7 +1,9 @@
-import type { Account, Category, CategoryGroup, Transaction } from './types';
+import type { Account, Category, CategoryGroup, Transaction } from '../../shared/types';
 
 let n = 0;
-export const id = <T extends string>() => `id-${++n}` as T;
+export function id<T extends string>() {
+  return `id-${++n}` as T;
+}
 
 export function tx(over: Partial<Transaction> = {}): Transaction {
   return {

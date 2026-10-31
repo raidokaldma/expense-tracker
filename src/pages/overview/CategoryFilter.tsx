@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
+import type { Category, CategoryGroup, CategoryId } from '../../../shared/types';
 import { cx } from '../../components/cx';
 import { Icon } from '../../components/icons';
-import type { Category, CategoryGroup, CategoryId } from '../../model/types';
-import s from './overview.module.css';
+import s from './CategoryFilter.module.css';
+import toolButton from './toolButton.module.css';
 
 interface Props {
   open: boolean;
@@ -33,7 +34,7 @@ export function CategoryFilter({ open, onOpen, onCancel, onDismiss, tree, hidden
 
   return (
     <div
-      className={s.catfilter}
+      className={s.categoryFilter}
       ref={rootRef}
       onBlur={(e) => {
         if (!open || (e.relatedTarget && rootRef.current?.contains(e.relatedTarget as Node))) return;
@@ -42,7 +43,7 @@ export function CategoryFilter({ open, onOpen, onCancel, onDismiss, tree, hidden
     >
       <button
         type="button"
-        className={cx(s.tbtn, open && s.on)}
+        className={cx(toolButton.toolButton, open && toolButton.on)}
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={open ? onCancel : onOpen}
@@ -50,11 +51,11 @@ export function CategoryFilter({ open, onOpen, onCancel, onDismiss, tree, hidden
       >
         <Icon name="filter" />
         Categories
-        {hiddenCount > 0 && <span className={s.fbadge}>{hiddenCount} hidden</span>}
+        {hiddenCount > 0 && <span className={s.filterBadge}>{hiddenCount} hidden</span>}
       </button>
       {open && (
         <div
-          className={s.fpanel}
+          className={s.filterPanel}
           role="dialog"
           aria-label="Show or hide categories"
           tabIndex={-1}
@@ -66,18 +67,18 @@ export function CategoryFilter({ open, onOpen, onCancel, onDismiss, tree, hidden
             }
           }}
         >
-          <div className={s.fhead}>
+          <div className={s.filterHeader}>
             <span>Show in Overview</span>
-            <button type="button" className={s.tbtn} disabled={!hiddenCount} onClick={onShowAll}>
+            <button type="button" className={toolButton.toolButton} disabled={!hiddenCount} onClick={onShowAll}>
               Select all
             </button>
           </div>
-          <div className={s.flist}>
+          <div className={s.filterList}>
             {tree.map(({ group, categories }) => {
               const shown = categories.filter((c) => !hidden.has(c.id)).length;
               return (
                 <div key={group.id}>
-                  <label className={s.fgrp}>
+                  <label className={s.filterGroup}>
                     <input
                       type="checkbox"
                       checked={shown === categories.length}
@@ -87,12 +88,12 @@ export function CategoryFilter({ open, onOpen, onCancel, onDismiss, tree, hidden
                       onChange={() => onToggle(categories.map((c) => c.id))}
                     />
                     <span>{group.name}</span>
-                    <span className={s.fcount}>
+                    <span className={s.filterCount}>
                       {shown}/{categories.length}
                     </span>
                   </label>
                   {categories.map((c) => (
-                    <label key={c.id} className={s.fcat}>
+                    <label key={c.id} className={s.filterCategory}>
                       <input type="checkbox" checked={!hidden.has(c.id)} onChange={() => onToggle([c.id])} />
                       <span>{c.name}</span>
                     </label>

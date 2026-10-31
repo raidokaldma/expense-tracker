@@ -1,8 +1,8 @@
-import { isMac } from '../../keys/keys';
+import { MOD_LABEL, SHIFT_LABEL } from '../../keys/keys';
 import { formatAmount } from '../../model/money';
 import { plural } from '../../model/plural';
+import s from './ActiveRowBar.module.css';
 import type { AmountSummary } from './amountSummary';
-import s from './transactions.module.css';
 import type { VisibleRow } from './visibleRows';
 
 interface Props {
@@ -30,9 +30,9 @@ export function ActiveRowBar({ row, selection, onSplit, onDelete }: Props) {
           .filter(Boolean)
           .join(' · ');
   return (
-    <div className={s.rowbar} role="group" aria-label="Active row">
-      <span className={s.rbinfo}>{info}</span>
-      <span className={s.grow} />
+    <div className={s.rowBar} role="group" aria-label="Active row">
+      <span className={s.rowBarInfo}>{info}</span>
+      <span className={s.spacer} />
       {/* the buttons keep focus in the grid */}
       <button
         type="button"
@@ -41,7 +41,11 @@ export function ActiveRowBar({ row, selection, onSplit, onDelete }: Props) {
         onMouseDown={(e) => e.preventDefault()}
         onClick={onSplit}
       >
-        Split <span className="kbd">{isMac ? '⌘⇧S' : 'Ctrl+Shift+S'}</span>
+        Split{' '}
+        <span className="kbd">
+          {MOD_LABEL}
+          {SHIFT_LABEL}S
+        </span>
       </button>
       <button
         type="button"
@@ -50,8 +54,7 @@ export function ActiveRowBar({ row, selection, onSplit, onDelete }: Props) {
         onMouseDown={(e) => e.preventDefault()}
         onClick={onDelete}
       >
-        {selection ? `Delete ${plural(selection.count, 'row')}` : 'Delete'}{' '}
-        <span className="kbd">{isMac ? '⌘⌫' : 'Ctrl+⌫'}</span>
+        {selection ? `Delete ${plural(selection.count, 'row')}` : 'Delete'} <span className="kbd">{MOD_LABEL}⌫</span>
       </button>
     </div>
   );

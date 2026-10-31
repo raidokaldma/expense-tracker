@@ -1,0 +1,21 @@
+.rowBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px 6px 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.rowBarInfo {
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.spacer {
+  flex: 1 1 auto;
+}

@@ -1,0 +1,26 @@
+/* read-only views for phone-sized windows; the page itself scrolls */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 8px 16px;
+  background: var(--ink);
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  color: #c9ced8;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+}
+.tab.current {
+  color: #fff;
+  background: #2f3440;
+}

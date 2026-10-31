@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import type { Timestamp } from '../../shared/types';
 import { makeLookup } from './lookup';
 import { searchTransactions } from './search';
 import { accounts, categories, groups, tx } from './testData';
-import type { Timestamp } from './types';
 
 const lookup = makeLookup(accounts, groups, categories);
 const rows = [

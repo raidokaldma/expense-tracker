@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "strict": true
   },
-  "include": ["server"]
+  "include": ["server", "shared"]
 }

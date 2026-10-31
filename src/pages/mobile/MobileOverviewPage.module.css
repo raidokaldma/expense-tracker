@@ -1,0 +1,103 @@
+.hiddenbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+.hiddenbar button {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+.hiddenbar button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.dimmed .row > span {
+  opacity: 0.5;
+  font-style: italic;
+}
+.table {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.section {
+  padding: 14px 12px 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.row {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  border: 0;
+  border-top: 1px solid var(--line-soft);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+/* a tappable row with an eye button beside it while editing */
+.split {
+  display: flex;
+  border-top: 1px solid var(--line-soft);
+}
+.split > .row {
+  flex: 1;
+  min-width: 0;
+  border-top: 0;
+}
+/* totals line up with the amounts beside the eyes */
+.editing .total,
+.editing .net {
+  padding-right: 56px;
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.parent {
+  background: var(--hover);
+  font-weight: 600;
+}
+.child > .row {
+  padding-left: 40px;
+}
+.child.open {
+  background: var(--accent-soft);
+}
+.total {
+  font-weight: 600;
+}
+.net {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+}
+.net :global(.pos) {
+  color: #7fd6a0;
+}
+.caret {
+  display: grid;
+  transition: transform 0.15s;
+}
+.caret.closed {
+  transform: rotate(-90deg);
+}

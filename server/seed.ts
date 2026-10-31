@@ -1,9 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
-import { newCategoryGroupId, newCategoryId } from '../src/model/ids.ts';
-import { categoryChangeSchema, importTransactionSchema, issuesOf } from '../src/model/schemas.ts';
-import type { Category, CategoryGroup, CategoryId, CategoryTree } from '../src/model/types.ts';
+import { newCategoryGroupId, newCategoryId } from '../shared/ids.ts';
+import { foldName } from '../shared/names.ts';
+import { categoryChangeSchema, importTransactionSchema, issuesOf } from '../shared/schemas.ts';
+import {
+  CATEGORY_KINDS,
+  type Category,
+  type CategoryGroup,
+  type CategoryId,
+  type CategoryTree,
+} from '../shared/types.ts';
 
 /** The example seed. Tests and the demo data use its categories. */
 export const EXAMPLE_SEED = fileURLToPath(new URL('../seed.example.json', import.meta.url));
@@ -23,7 +30,7 @@ const seedSchema = z.strictObject({
   groups: z.array(
     z.strictObject({
       name: z.string(),
-      kind: z.enum(['income', 'expense', 'transfer', 'opening']),
+      kind: z.enum(CATEGORY_KINDS),
       categories: z.array(z.string()),
     }),
   ),
@@ -74,10 +81,10 @@ export function readSeed(file: string): Seed {
         .join('; '),
     );
 
-  const byName = new Map(tree.data.categories.map((c) => [c.name.toLocaleLowerCase('et'), c.id]));
+  const byName = new Map(tree.data.categories.map((c) => [foldName(c.name), c.id]));
   // split rows share their original's externalId, as after an import
   const transactions = seed.data.transactions.map(({ category, externalId, ...row }, i) => {
-    const categoryId = category ? byName.get(category.trim().toLocaleLowerCase('et')) : null;
+    const categoryId = category ? byName.get(foldName(category)) : null;
     if (categoryId === undefined) throw fail(`transactions.${i}.category: no category “${category}”`);
     return { ...row, externalId: externalId ?? null, categoryId };
   });

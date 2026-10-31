@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { Account, CategoryTree, ImportTransaction, Timestamp, Transaction } from '../src/model/types.ts';
+import type { Account, CategoryTree, ImportTransaction, Timestamp, Transaction } from '../shared/types.ts';
 import { createApp } from './app.ts';
 import { migrate, openDatabase } from './db.ts';
 import { EXAMPLE_SEED, readSeed } from './seed.ts';
@@ -26,17 +26,24 @@ async function call(method: string, path: string, body?: unknown) {
   return { status: res.status, body: text ? JSON.parse(text) : null };
 }
 
-const pushed = (externalId: string, over: Partial<ImportTransaction> = {}): ImportTransaction => ({
-  externalId,
-  account: 'EE123',
-  occurredAt: '2026-10-20T14:30:00+03:00',
-  counterparty: 'Green Basket',
-  amount: -1250,
-  ...over,
-});
+function pushed(externalId: string, over: Partial<ImportTransaction> = {}): ImportTransaction {
+  return {
+    externalId,
+    account: 'EE123',
+    occurredAt: '2026-10-20T14:30:00+03:00',
+    counterparty: 'Green Basket',
+    amount: -1250,
+    ...over,
+  };
+}
 
-const transactions = async () => (await call('GET', '/transactions')).body as Transaction[];
-const tree = async () => (await call('GET', '/categories')).body as CategoryTree;
+async function transactions() {
+  return (await call('GET', '/transactions')).body as Transaction[];
+}
+
+async function tree() {
+  return (await call('GET', '/categories')).body as CategoryTree;
+}
 
 describe('access', () => {
   it('accepts writes only as JSON', async () => {
@@ -280,17 +287,17 @@ describe('categories', () => {
     migrate(db);
     const seeded = createService(db);
     seeded.seed(readSeed(EXAMPLE_SEED));
-    const rows = seeded.listTransactions();
+    const rows = seeded.transactions.list();
     expect(rows).toHaveLength(4);
     expect(rows.filter((t) => t.categoryId)).toHaveLength(3);
     expect(rows.filter((t) => t.addedAt !== t.occurredAt)).toEqual([]);
     expect(
-      seeded
-        .listAccounts()
+      seeded.accounts
+        .list()
         .map((a) => a.name)
         .sort(),
     ).toEqual(['Cash', 'Northmere Bank']);
-    const again = seeded.importTransactions([
+    const again = seeded.transactions.import([
       { ...pushed('lhv-2026-0001'), occurredAt: '2026-09-28T06:12:00Z' as Timestamp },
     ]);
     expect(again).toMatchObject({ added: 0, skipped: ['lhv-2026-0001'] });

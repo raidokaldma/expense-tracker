@@ -4,11 +4,11 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { EXAMPLE_SEED, readSeed } from './seed.ts';
 
-const seedFile = (content: unknown) => {
+function seedFile(content: unknown) {
   const file = join(mkdtempSync(join(tmpdir(), 'seed-')), 'seed.json');
   writeFileSync(file, typeof content === 'string' ? content : JSON.stringify(content));
   return file;
-};
+}
 
 describe('seed file', () => {
   it('reads the example into a tree, ordered as written', () => {

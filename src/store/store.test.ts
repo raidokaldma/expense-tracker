@@ -3,18 +3,11 @@ import { createApp } from '../../server/app';
 import { migrate, openDatabase } from '../../server/db';
 import { EXAMPLE_SEED, readSeed } from '../../server/seed';
 import { createService } from '../../server/service';
+import type { NewTransaction } from '../../shared/types';
 import { createHttpApi } from '../api/httpApi';
-import type { NewTransaction } from '../model/types';
-import {
-  createTransaction,
-  load,
-  refresh,
-  reload,
-  removeTransactions,
-  splitTransaction,
-  undo,
-  useStore,
-} from './store';
+import { load, refresh, reload, useStore } from './store';
+import { useToast } from './toast';
+import { createTransaction, removeTransactions, splitTransaction, undo } from './transactions';
 
 /** The real server, in-process, with an in-memory database. */
 function connect() {
@@ -26,15 +19,17 @@ function connect() {
   return createHttpApi(async (url, init) => app.request(url, init));
 }
 
-const row = (counterparty: string): NewTransaction => ({
-  externalId: null,
-  accountId: null,
-  occurredAt: null,
-  counterparty,
-  amount: null,
-  categoryId: null,
-  description: null,
-});
+function row(counterparty: string): NewTransaction {
+  return {
+    externalId: null,
+    accountId: null,
+    occurredAt: null,
+    counterparty,
+    amount: null,
+    categoryId: null,
+    description: null,
+  };
+}
 
 describe('store', () => {
   it('keeps saving after a failed write', async () => {
@@ -94,7 +89,7 @@ describe('store', () => {
     await pending;
     const s = useStore.getState();
     expect(s.transactions.map((t) => t.counterparty).sort()).toEqual(['Green Basket', 'Green Basket', 'Typed here']);
-    expect(s.toast?.text).toBe('2 new transactions');
+    expect(useToast.getState().toast?.text).toBe('2 new transactions');
   });
 
   it('splits into a row with the same bank id and import time, without amount or category', async () => {

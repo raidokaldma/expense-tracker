@@ -1,0 +1,48 @@
+.toaster {
+  position: fixed;
+  right: 24px;
+  bottom: 18px;
+  z-index: 60;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(560px, calc(100vw - 40px));
+  padding: 7px 14px;
+  border-radius: 6px;
+  background: #16181d;
+  color: #f1f3f6;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(20, 24, 32, 0.22);
+  pointer-events: auto;
+  animation: toast-in 0.15s ease-out;
+}
+.toast.warn {
+  background: #8f1d15;
+}
+.toast button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: -3px -6px -3px 0;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #9cbcff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.toast button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

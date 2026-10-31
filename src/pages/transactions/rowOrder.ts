@@ -1,9 +1,7 @@
-import type { Transaction, TransactionId } from '../../model/types';
-
-export type SortBy = 'addedAt' | 'occurredAt';
+import type { Transaction, TransactionId, TransactionSort } from '../../../shared/types';
 
 /** Newest first by import date or transaction date; rows without the date go last. */
-export function sortIds(rows: Transaction[], by: SortBy): TransactionId[] {
+export function sortIds(rows: Transaction[], by: TransactionSort): TransactionId[] {
   const key = (r: Transaction) => (by === 'occurredAt' ? r.occurredAt : r.addedAt || r.occurredAt) || '';
   return [...rows]
     .sort((a, b) => {
@@ -16,7 +14,7 @@ export function sortIds(rows: Transaction[], by: SortBy): TransactionId[] {
 }
 
 /** The stored order plus rows it does not know yet (new rows, imports), which go on top. */
-export function withMissing(order: TransactionId[], rows: Transaction[], by: SortBy): TransactionId[] {
+export function withMissing(order: TransactionId[], rows: Transaction[], by: TransactionSort): TransactionId[] {
   const known = new Set(order);
   const missing = rows.filter((t) => !known.has(t.id));
   return missing.length ? [...sortIds(missing, by), ...order] : order;

@@ -1,0 +1,27 @@
+.editorInput {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  margin: 0;
+  padding: 0 9px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  /* the cell's own outline (.active) frames the editor, so the edges match the active cell */
+  outline: none;
+  box-shadow: 0 4px 14px rgba(20, 24, 32, 0.16);
+}
+.editorInput.numeric {
+  text-align: right;
+}
+.editorInput.invalid {
+  outline-color: #c8322b;
+  background: var(--neg-tint);
+}
+/* date editor: while the calendar has the keys, the text field shows no cursor */
+.calendarMode {
+  caret-color: transparent;
+}
+.calendarMode::selection {
+  background: transparent;
+}

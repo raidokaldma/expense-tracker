@@ -3,16 +3,21 @@ import { join } from 'node:path';
 import { serve } from '@hono/node-server';
 import { createApp } from './app.ts';
 import { readConfig } from './config.ts';
-import { migrate, openDatabase, schemaVersion } from './db.ts';
-import { readSeed } from './seed.ts';
+import { type Db, migrate, openDatabase, schemaVersion } from './db.ts';
+import { readSeed, type Seed } from './seed.ts';
 import { createService } from './service.ts';
+
+/** The seed for a database without a schema yet; read before migrating, which gives it one. */
+function seedForNewDatabase(db: Db, seedFile: string | null): Seed | null {
+  if (schemaVersion(db) !== 0 || !seedFile) return null;
+  if (existsSync(seedFile)) return readSeed(seedFile);
+  console.log(`No seed file at ${seedFile}: starting empty`);
+  return null;
+}
 
 const config = readConfig();
 const db = openDatabase(config.dbPath);
-const isNew = schemaVersion(db) === 0;
-const hasSeed = config.seedFile != null && existsSync(config.seedFile);
-if (isNew && config.seedFile && !hasSeed) console.log(`No seed file at ${config.seedFile}: starting empty`);
-const seed = isNew && hasSeed ? readSeed(config.seedFile!) : null;
+const seed = seedForNewDatabase(db, config.seedFile);
 migrate(db, { backupDir: config.dbPath === ':memory:' ? undefined : config.backupDir });
 const service = createService(db);
 if (seed) {

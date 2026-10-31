@@ -1,0 +1,119 @@
+@keyframes flashrow {
+  0% {
+    background: #ffe58f;
+  }
+  100% {
+    background: transparent;
+  }
+}
+.wrap {
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 240px;
+  overscroll-behavior: contain;
+  /* rows are drawn only while in view; the browser must not "anchor" the scroll position to them */
+  overflow-anchor: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.grid {
+  min-width: 1080px;
+  outline: none;
+}
+.row {
+  display: grid;
+  grid-template-columns: 56px 150px 158px minmax(180px, 1.2fr) 120px 190px minmax(200px, 2fr);
+  border-bottom: 1px solid var(--line-soft);
+  background: #fff;
+}
+.virtualRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--rowh) + 1px);
+}
+.virtualRow.currentRow {
+  z-index: 4;
+}
+.gridHeader {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.currentRow {
+  background: var(--accent-tint);
+}
+.flash .cell {
+  animation: flashrow 2.4s ease-out;
+}
+.cell {
+  position: relative;
+  height: var(--rowh);
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid var(--line-soft);
+  min-width: 0;
+  cursor: default;
+  user-select: none;
+}
+.cell:last-child {
+  border-right: 0;
+}
+/* the editor fills the cell */
+.editing {
+  padding: 0;
+  z-index: 5;
+}
+.num {
+  justify-content: flex-end;
+}
+.cell:hover .quickFilter {
+  opacity: 1;
+}
+.rowNumber {
+  color: var(--muted);
+  justify-content: flex-end;
+  font-size: 11.5px;
+  padding: 0 8px;
+}
+.draft .cell {
+  color: var(--muted);
+}
+/* a row in a selection of several */
+.selected .cell {
+  background: #dfe8fb;
+}
+.grid:not(:focus-within) .active {
+  outline-color: #a9b1be;
+}
+/* the filter button on recipient and category cells, shown while the cell is hovered */
+.quickFilter {
+  margin-left: auto;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  /* the same 3px gap on the right as above and below (cell padding 10px) */
+  margin-right: -7px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+}
+.quickFilter:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.active {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  z-index: 2;
+}

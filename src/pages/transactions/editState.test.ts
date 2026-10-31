@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { tx } from '../../model/testData';
 import { COLS, draftToNew } from './columns';
-import { initialEdit } from './editState';
+import { initialEdit, NOTHING_HIGHLIGHTED, stepHighlight } from './editState';
 
-const column = (key: string) => COLS.find((c) => c.key === key)!;
+function column(key: string) {
+  return COLS.find((c) => c.key === key)!;
+}
 const row = tx({ occurredAt: '2026-10-20T11:30:00Z' as ReturnType<typeof tx>['occurredAt'] });
 
 describe('opening the editor', () => {
@@ -46,5 +48,14 @@ describe('the draft row', () => {
     const created = draftToNew({ counterparty: 'Market' }, 'amount', -900);
     expect(created).toMatchObject({ externalId: null, counterparty: 'Market', amount: -900, categoryId: null });
     expect(created.occurredAt).toMatch(/Z$/);
+  });
+});
+
+describe('stepHighlight', () => {
+  it('wraps through nothing highlighted at either end', () => {
+    expect(stepHighlight(2, 1, 3)).toBe(NOTHING_HIGHLIGHTED);
+    expect(stepHighlight(NOTHING_HIGHLIGHTED, 1, 3)).toBe(0);
+    expect(stepHighlight(0, -1, 3)).toBe(NOTHING_HIGHLIGHTED);
+    expect(stepHighlight(NOTHING_HIGHLIGHTED, -1, 3)).toBe(2);
   });
 });

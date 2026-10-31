@@ -1,7 +1,8 @@
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { cx } from '../../components/cx';
-import { RepeatGuard, rowMove } from '../../keys/keys';
-import s from './settings.module.css';
+import { listMove } from '../../keys/keys';
+import { useRepeatGuard } from '../../keys/useRepeatGuard';
+import s from './OptionPicker.module.css';
 
 export interface PickerOption {
   value: string;
@@ -24,7 +25,7 @@ interface Props {
 /** A list that opens under a row and takes the keys: ↑ ↓ to choose, Enter to pick, Esc to close. */
 export function OptionPicker({ title, options, initial, onPick, onCancel, onDismiss }: Props) {
   const [highlighted, setHighlighted] = useState(initial);
-  const repeatGuard = useRef(new RepeatGuard()).current;
+  const repeatGuard = useRepeatGuard();
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     e.stopPropagation();
@@ -32,7 +33,7 @@ export function OptionPicker({ title, options, initial, onPick, onCancel, onDism
       e.preventDefault();
       return;
     }
-    const next = rowMove(e, highlighted, options.length, true);
+    const next = listMove(e, highlighted, options.length);
     if (next != null) {
       e.preventDefault();
       setHighlighted(next);
@@ -60,11 +61,11 @@ export function OptionPicker({ title, options, initial, onPick, onCancel, onDism
       }}
       ref={(el) => el?.focus({ preventScroll: true })}
     >
-      <div className={s.ptitle}>{title}</div>
+      <div className={s.pickerTitle}>{title}</div>
       {options.map((option, i) => (
         <div
           key={option.value}
-          className={cx(s.opt, i === highlighted && s.hi)}
+          className={cx(s.option, i === highlighted && s.highlighted)}
           id={`o-${i}`}
           role="option"
           aria-selected={i === highlighted}

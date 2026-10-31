@@ -1,6 +1,7 @@
 import { cx } from '../../components/cx';
 import { MOD_LABEL } from '../../keys/keys';
-import s from './settings.module.css';
+import s from './ChangesCard.module.css';
+import card from './card.module.css';
 
 /** The unsaved category changes in words, with Save and Discard. */
 export function ChangesCard({
@@ -13,7 +14,7 @@ export function ChangesCard({
   onDiscard: () => void;
 }) {
   return (
-    <div className={s.card}>
+    <div className={cx(card.card, card.padded)}>
       <h2>
         Unsaved changes <span className={cx(s.badge, !changes.length && s.zero)}>{changes.length}</span>
       </h2>

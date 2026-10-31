@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { cx } from '../../components/cx';
 import { formatAmount } from '../../model/money';
 import { useStore } from '../../store/store';
-import s from './transactions.module.css';
+import s from './AccountCards.module.css';
 
 /** One card per account with its total, plus "All accounts"; clicking a card filters the grid to it. */
 export function AccountCards({ selected, onPick }: { selected: string; onPick: (name: string) => void }) {
@@ -24,18 +24,18 @@ export function AccountCards({ selected, onPick }: { selected: string; onPick: (
     <button
       key={key}
       type="button"
-      className={cx(s.acct, on && s.on)}
+      className={cx(s.accountCard, on && s.current)}
       aria-pressed={on}
       onClick={() => onPick(filterTo)}
       title={title}
     >
-      <span className={s.aname}>{name}</span>
-      <span className={cx(s.atotal, total > 0 && 'pos')}>{formatAmount(total)}</span>
+      <span className={s.accountName}>{name}</span>
+      <span className={cx(s.accountTotal, total > 0 && 'pos')}>{formatAmount(total)}</span>
     </button>
   );
 
   return (
-    <div className={s.accts} role="group" aria-label="Account totals">
+    <div className={s.accountCards} role="group" aria-label="Account totals">
       {totals.map(({ account, total }) => {
         const on = selected.toLowerCase() === account.name.toLowerCase();
         // clicking the selected card again shows all accounts

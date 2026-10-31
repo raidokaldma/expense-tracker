@@ -4,14 +4,16 @@ import { gridCommand, gridMove, positionAfter } from './gridKeys';
 
 // `mod` is the shortcut key: ⌘ on a Mac, Ctrl elsewhere; `ctrl` is Ctrl itself
 type Mods = Partial<{ mod: boolean; ctrl: boolean; shift: boolean; alt: boolean; repeat: boolean }>;
-const key = (k: string, mods: Mods = {}) => ({
-  key: k,
-  metaKey: isMac && !!mods.mod,
-  ctrlKey: (!isMac && !!mods.mod) || !!mods.ctrl,
-  altKey: !!mods.alt,
-  shiftKey: !!mods.shift,
-  repeat: !!mods.repeat,
-});
+function key(k: string, mods: Mods = {}) {
+  return {
+    key: k,
+    metaKey: isMac && !!mods.mod,
+    ctrlKey: (!isMac && !!mods.mod) || !!mods.ctrl,
+    altKey: !!mods.alt,
+    shiftKey: !!mods.shift,
+    repeat: !!mods.repeat,
+  };
+}
 
 describe('grid keys', () => {
   it('Tab runs along the row and wraps; Enter goes down', () => {

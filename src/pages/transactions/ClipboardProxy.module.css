@@ -1,0 +1,10 @@
+/* the clipboard goes through this hidden text box, so copy and paste need no permissions */
+.clipboardProxy {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

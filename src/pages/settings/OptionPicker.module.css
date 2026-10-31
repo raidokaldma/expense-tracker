@@ -1,0 +1,47 @@
+.picker {
+  margin: 4px 10px 8px 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(20, 24, 32, 0.14);
+  padding: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  outline: none;
+  position: relative;
+}
+.picker:focus {
+  border-color: var(--accent);
+}
+.pickerTitle {
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.option {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.option:hover {
+  background: var(--hover);
+}
+.option.highlighted,
+.option.highlighted:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.option.highlighted .hint {
+  color: #e3eafb;
+}

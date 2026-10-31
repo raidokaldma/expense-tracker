@@ -1,0 +1,12 @@
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.loading {
+  padding: 48px 24px;
+  color: var(--muted);
+  text-align: center;
+}

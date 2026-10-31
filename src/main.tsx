@@ -1,7 +1,7 @@
 import { type ReactNode, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createHashRouter, Navigate, RouterProvider } from 'react-router';
-import { createHttpApi } from './api/httpApi';
+import { browserFetch, createHttpApi } from './api/httpApi';
 import { withRequestLog } from './api/requestLog';
 import { AppShell } from './components/AppShell';
 import { useNarrowScreen } from './components/useNarrowScreen';
@@ -10,7 +10,8 @@ import { MobileTransactionsPage } from './pages/mobile/MobileTransactionsPage';
 import { OverviewPage } from './pages/overview/OverviewPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { TransactionsPage } from './pages/transactions/TransactionsPage';
-import { importTransactions, load } from './store/store';
+import { load } from './store/store';
+import { importTransactions } from './store/transactions';
 import './styles/global.css';
 
 /** Phones get read-only views of the same routes. */
@@ -38,7 +39,7 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-const api = withRequestLog(createHttpApi());
+const api = createHttpApi(withRequestLog(browserFetch));
 // imports can also be run from the browser console:
 //   await expenseTracker.import([{ externalId, account, occurredAt, counterparty, amount, description }])
 Object.assign(window, { expenseTracker: { api, import: importTransactions } });

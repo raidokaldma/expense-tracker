@@ -7,6 +7,6 @@ export default defineConfig({
   // npm run dev: the API server runs next to Vite (see server/dev.ts)
   server: { proxy: { '/api': 'http://127.0.0.1:8787' } },
   test: {
-    include: ['src/**/*.test.ts', 'server/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'server/**/*.test.ts', 'shared/**/*.test.ts'],
   },
 });

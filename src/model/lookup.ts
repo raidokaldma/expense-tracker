@@ -1,6 +1,13 @@
-import type { Account, AccountId, Category, CategoryGroup, CategoryGroupId, CategoryId, CategoryKind } from './types';
-
-export const KINDS: CategoryKind[] = ['income', 'expense', 'transfer', 'opening'];
+import {
+  type Account,
+  type AccountId,
+  CATEGORY_KINDS,
+  type Category,
+  type CategoryGroup,
+  type CategoryGroupId,
+  type CategoryId,
+  type CategoryKind,
+} from '../../shared/types';
 
 export const KIND_LABELS: Record<CategoryKind, string> = {
   income: 'Income',
@@ -38,7 +45,7 @@ export function makeLookup(accounts: Account[], groups: CategoryGroup[], categor
 
 /** Groups in display order: by kind, then their own order; categories within a group by order. */
 export function sortedTree(groups: CategoryGroup[], categories: Category[]) {
-  return KINDS.flatMap((kind) =>
+  return CATEGORY_KINDS.flatMap((kind) =>
     groups
       .filter((g) => g.kind === kind)
       .sort((x, y) => x.order - y.order)

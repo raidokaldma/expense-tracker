@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
+import type { CategoryId } from '../../shared/types';
 import { nearbySuffixCategory, suffixes } from './nearbySuffix';
 import { suggestCategories } from './suggest';
 import { tx } from './testData';
-import type { CategoryId } from './types';
 
-const cat = (id: string) => id as CategoryId;
-const day = (d: number) => `2026-08-${String(d).padStart(2, '0')}T12:00:00Z` as never;
+function cat(id: string) {
+  return id as CategoryId;
+}
+
+function day(d: number) {
+  return `2026-08-${String(d).padStart(2, '0')}T12:00:00Z` as never;
+}
 
 describe('nearby recipient endings', () => {
   it('lists the comma-separated endings, longest first', () => {

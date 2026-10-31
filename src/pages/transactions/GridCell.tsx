@@ -4,7 +4,8 @@ import { Icon } from '../../components/icons';
 import type { Lookup } from '../../model/lookup';
 import { isBlank } from '../../model/validity';
 import { type Col, displayText } from './columns';
-import s from './transactions.module.css';
+import s from './GridCell.module.css';
+import grid from './TransactionsGrid.module.css';
 import type { VisibleRow } from './visibleRows';
 
 interface Props {
@@ -47,11 +48,11 @@ export function GridCell({
   return (
     <div
       className={cx(
-        s.cell,
-        column.num && s.num,
+        grid.cell,
+        column.num && grid.num,
         (column.num || key === 'occurredAt') && 'mono',
-        active && s.active,
-        editing && s.editing,
+        active && grid.active,
+        editing && grid.editing,
         missing && s.missing,
         positive && 'pos',
       )}
@@ -61,11 +62,11 @@ export function GridCell({
       onMouseDown={onMouseDown}
       onDoubleClick={onDoubleClick}
     >
-      {editing ? children : <span className={cx(s.txt, placeholder && s.ph)}>{text}</span>}
+      {editing ? children : <span className={cx(s.text, placeholder && s.placeholder)}>{text}</span>}
       {!editing && onQuickFilter && text && (
         <button
           type="button"
-          className={s.quickfilter}
+          className={grid.quickFilter}
           tabIndex={-1}
           aria-label={`Show only rows with “${text}”`}
           title={`Show only rows with “${text}”`}

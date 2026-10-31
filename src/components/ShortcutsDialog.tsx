@@ -2,11 +2,16 @@ import { type KeyboardEvent, useLayoutEffect, useRef } from 'react';
 import { create } from 'zustand';
 import { isMod } from '../keys/keys';
 import { SHORTCUT_SECTIONS } from '../keys/shortcuts';
-import s from './shortcutsDialog.module.css';
+import s from './ShortcutsDialog.module.css';
 
 const useOpen = create(() => false);
-export const openShortcuts = () => useOpen.setState(true);
-const close = () => useOpen.setState(false);
+export function openShortcuts() {
+  return useOpen.setState(true);
+}
+
+function close() {
+  return useOpen.setState(false);
+}
 
 /**
  * Every shortcut (⌘/ or the header button). Esc, a click outside or ⌘/ closes it and gives the focus back; it also

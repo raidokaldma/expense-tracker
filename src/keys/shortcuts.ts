@@ -1,18 +1,14 @@
-import { isMac } from './keys';
+import { ALT_LABEL as alt, MOD_LABEL as mod, SHIFT_LABEL as shift } from './keys';
 
 // Every shortcut in the app, for the shortcuts dialog (⌘/). Keep it in step with the key handlers.
 
-const mod = isMac ? '⌘' : 'Ctrl+';
-const alt = isMac ? '⌥' : 'Alt+';
-const shift = isMac ? '⇧' : 'Shift+';
-
-export interface Shortcut {
+interface Shortcut {
   /** Alternatives, each shown as its own key. */
   keys: string[];
   what: string;
 }
 
-export interface ShortcutSection {
+interface ShortcutSection {
   title: string;
   items: Shortcut[];
 }

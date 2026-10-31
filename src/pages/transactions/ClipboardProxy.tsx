@@ -1,12 +1,14 @@
 import type { KeyboardEvent, RefObject } from 'react';
 import { isMod } from '../../keys/keys';
-import s from './transactions.module.css';
+import s from './ClipboardProxy.module.css';
 
 // ⌘C / ⌘X / ⌘V on a grid cell. The grid is not a text field, so on the shortcut the cell's text goes into a hidden
 // text box that takes focus for a moment; the browser then copies, cuts or pastes natively, with no clipboard
 // permission needed, and focus goes back to the grid.
 
-const isClipboardKey = (e: KeyboardEvent) => isMod(e) && ['c', 'x', 'v'].includes(e.key.toLowerCase());
+function isClipboardKey(e: KeyboardEvent) {
+  return isMod(e) && ['c', 'x', 'v'].includes(e.key.toLowerCase());
+}
 
 /**
  * When `e` is ⌘C, ⌘X or ⌘V, readies the box (the cell's text to copy, or empty to paste into) and gives it focus.
@@ -44,7 +46,7 @@ interface Props {
 export function ClipboardProxy({ boxRef, onStrayKey, onCopied, onCut, onPaste }: Props) {
   return (
     <textarea
-      className={s.clipproxy}
+      className={s.clipboardProxy}
       aria-hidden="true"
       tabIndex={-1}
       ref={boxRef}

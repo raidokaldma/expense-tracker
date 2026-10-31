@@ -1,8 +1,8 @@
+import { monthKey } from '../../../shared/time';
+import type { Transaction } from '../../../shared/types';
 import { cellId } from '../../components/selection';
 import type { Pivot } from '../../model/pivot';
 import { plural } from '../../model/plural';
-import { monthKey } from '../../model/time';
-import type { Transaction } from '../../model/types';
 
 /** What the side panel shows for the selected cells. */
 export interface PanelContent {

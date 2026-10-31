@@ -1,9 +1,9 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { type KeyboardEvent, type ReactNode, type RefObject, useLayoutEffect, useRef, useState } from 'react';
+import type { TransactionId } from '../../../shared/types';
 import { cx } from '../../components/cx';
-import type { TransactionId } from '../../model/types';
 import { COLS } from './columns';
-import s from './transactions.module.css';
+import s from './TransactionsGrid.module.css';
 import { useKeepCellInView } from './useKeepCellInView';
 import type { VisibleRow } from './visibleRows';
 
@@ -21,7 +21,6 @@ interface Props {
   selectedRows: ReadonlySet<string>;
   /** A row to highlight briefly. */
   flashId: TransactionId | null;
-  /** The scroll area. */
   scrollRef: RefObject<HTMLDivElement | null>;
   /** The element with the keyboard focus. */
   gridRef: RefObject<HTMLDivElement | null>;
@@ -83,7 +82,7 @@ export function TransactionsGrid({
         onKeyDown={onKeyDown}
         ref={gridRef}
       >
-        <div className={s.ghead} role="rowgroup" ref={headRef}>
+        <div className={s.gridHeader} role="rowgroup" ref={headRef}>
           {header}
         </div>
         <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
@@ -95,10 +94,10 @@ export function TransactionsGrid({
                 key={row.transaction.id}
                 className={cx(
                   s.row,
-                  s.vrow,
-                  item.index === rowIndex && s.cur,
+                  s.virtualRow,
+                  item.index === rowIndex && s.currentRow,
                   row.draft && s.draft,
-                  selected && selectedRows.size > 1 && s.sel,
+                  selected && selectedRows.size > 1 && s.selected,
                   row.transaction.id === flashId && s.flash,
                 )}
                 style={{ transform: `translateY(${item.start - headerHeight}px)` }}
@@ -106,7 +105,7 @@ export function TransactionsGrid({
                 aria-selected={selected}
                 data-row={item.index}
               >
-                <div className={cx(s.cell, s.idx, 'mono')} role="rowheader">
+                <div className={cx(s.cell, s.rowNumber, 'mono')} role="rowheader">
                   <span>{row.draft ? '+' : row.number}</span>
                 </div>
                 {COLS.map((_, columnIndex) => renderCell(row, item.index, columnIndex))}

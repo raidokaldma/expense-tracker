@@ -1,0 +1,126 @@
+.tree,
+.accountList {
+  outline: none;
+  padding: 4px 0 8px;
+}
+.accountList .emptyRow {
+  margin: 0;
+  padding-left: 16px;
+}
+.groupRow,
+.categoryRow,
+.accountRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 10px 0 16px;
+  border-top: 1px solid var(--line-soft);
+  cursor: default;
+  user-select: none;
+}
+.selected {
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--accent-tint);
+}
+.tree:not(:focus-within) .selected,
+.accountList:not(:focus-within) .selected {
+  box-shadow: inset 0 0 0 2px #a9b1be;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.rowActions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+}
+.groupRow:hover .rowActions,
+.categoryRow:hover .rowActions,
+.accountRow:hover .rowActions,
+.selected .rowActions {
+  opacity: 1;
+}
+.addRow {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px 0 40px;
+  border-top: 1px solid var(--line-soft);
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--accent-tint);
+}
+.addRow.forGroup {
+  padding-left: 16px;
+}
+.emptyRow {
+  padding: 8px 16px 8px 40px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-style: italic;
+}
+/* while a name is being added, the add row is the active row */
+.tree:has(.addRow) .selected,
+.accountList:has(.addRow) .selected {
+  box-shadow: none;
+  background: transparent;
+}
+/* row actions stay out of the way while a name is edited */
+.tree:has(.nameInput) .rowActions,
+.accountList:has(.nameInput) .rowActions {
+  opacity: 0;
+}
+.groupRow {
+  background: #f3f5f8;
+  font-weight: 700;
+  border-top-color: var(--line);
+}
+/* so does the row's New / Edited tag */
+.groupRow:has(.nameInput) .tag,
+.categoryRow:has(.nameInput) .tag {
+  display: none;
+}
+.categoryRow {
+  padding-left: 40px;
+}
+.nameInput {
+  /* edited in place: the text stays where the name was, the caret shows it is being edited */
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+}
+.nameInput::placeholder {
+  color: var(--muted);
+  font-weight: 400;
+}
+.nameInput.bad {
+  color: var(--neg-ink);
+}
+.accountList {
+  margin: 0 -16px -16px;
+  padding: 0;
+  min-height: 8px;
+}
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #e3ebfb;
+  color: #1e3f86;
+  white-space: nowrap;
+}

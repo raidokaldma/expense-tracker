@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import type { Category, Timestamp } from '../../../shared/types';
 import { buildPivot } from '../../model/pivot';
 import { categories, groups, tx } from '../../model/testData';
-import type { Category, Timestamp } from '../../model/types';
 import { panelContent } from './panelContent';
 
 const pivot = buildPivot({
@@ -17,9 +17,13 @@ const pivot = buildPivot({
   showHidden: false,
   collapsed: new Set(),
 });
-const key = (label: string) => pivot.rows.find((r) => r.label === label)!.key;
-const content = (...cells: [string, string][]) =>
-  panelContent(new Set(cells.map(([label, col]) => `${key(label)}|${col}`)), pivot, 'Sep 2026 – Oct 2026');
+function key(label: string) {
+  return pivot.rows.find((r) => r.label === label)!.key;
+}
+
+function content(...cells: [string, string][]) {
+  return panelContent(new Set(cells.map(([label, col]) => `${key(label)}|${col}`)), pivot, 'Sep 2026 – Oct 2026');
+}
 
 describe('panelContent', () => {
   it('describes one cell by its row and month', () => {

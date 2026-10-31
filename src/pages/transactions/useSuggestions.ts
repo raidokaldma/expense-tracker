@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
+import type { CategoryId, Transaction } from '../../../shared/types';
 import { sortedTree } from '../../model/lookup';
 import { suggestCategories } from '../../model/suggest';
-import type { CategoryId, Transaction } from '../../model/types';
 import { useStore } from '../../store/store';
 import { type ColKey, DRAFT_ID } from './columns';
 import type { Option } from './editState';

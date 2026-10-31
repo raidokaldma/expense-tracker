@@ -1,6 +1,7 @@
 import { cx } from '../../components/cx';
 import { isMod } from '../../keys/keys';
-import s from './settings.module.css';
+import list from './list.module.css';
+import s from './NameField.module.css';
 
 interface NameFieldProps {
   label: string;
@@ -16,28 +17,28 @@ interface NameFieldProps {
 }
 
 /** The text field for adding or renaming a group, category or account, in place; takes focus when it appears. */
-export function NameField(p: NameFieldProps) {
+export function NameField(props: NameFieldProps) {
   return (
     <input
-      className={cx(s.ined, p.error && s.bad)}
+      className={cx(list.nameInput, props.error && list.bad)}
       type="text"
-      aria-label={p.label}
-      placeholder={p.placeholder}
-      value={p.text}
-      onChange={(e) => p.onText(e.target.value)}
+      aria-label={props.label}
+      placeholder={props.placeholder}
+      value={props.text}
+      onChange={(e) => props.onText(e.target.value)}
       onKeyDown={(e) => {
         // ⌘S is left to the page (it saves); other keys stay in the field
         if (isMod(e) && e.key.toLowerCase() === 's') return;
         e.stopPropagation();
         if (e.key === 'Enter') {
           e.preventDefault();
-          p.onDone();
+          props.onDone();
         } else if (e.key === 'Escape') {
           e.preventDefault();
-          p.onCancel();
+          props.onCancel();
         }
       }}
-      onBlur={p.onBlur}
+      onBlur={props.onBlur}
       onFocus={(e) => e.target.select()}
       // biome-ignore lint/a11y/noAutofocus: adding and renaming start from the keyboard and must take focus
       autoFocus

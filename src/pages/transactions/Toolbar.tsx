@@ -1,11 +1,10 @@
+import type { Transaction } from '../../../shared/types';
 import { cx } from '../../components/cx';
-import { Icon } from '../../components/icons';
-import { isMac } from '../../keys/keys';
+import { FindButton } from '../../components/FindButton';
 import { formatAmount } from '../../model/money';
 import { plural } from '../../model/plural';
-import type { Transaction } from '../../model/types';
 import { missingFields, REQUIRED_FIELDS, REQUIRED_LABELS } from '../../model/validity';
-import s from './transactions.module.css';
+import s from './Toolbar.module.css';
 
 interface Props {
   total: number;
@@ -27,53 +26,44 @@ interface Props {
 }
 
 /** Counts, Find, the "needs attention" filter and Clear filters, above the grid. */
-export function Toolbar(p: Props) {
-  const count = p.invalid.length;
+export function Toolbar(props: Props) {
+  const count = props.invalid.length;
   return (
     <div className={s.top}>
       <div>
         <p className="subtitle">
-          {plural(p.total, 'transaction')} · {p.shown} shown
-          {p.shownSum != null && <> · sum {formatAmount(p.shownSum)}</>}
+          {plural(props.total, 'transaction')} · {props.shown} shown
+          {props.shownSum != null && <> · sum {formatAmount(props.shownSum)}</>}
         </p>
-        {p.hiddenInvalid > 0 && (
-          <div className={s.hidnote} role="status">
+        {props.hiddenInvalid > 0 && (
+          <div className={s.hiddenNote} role="status">
             <span>
-              {p.hiddenInvalid === 1
+              {props.hiddenInvalid === 1
                 ? '1 row needing attention is hidden by filters'
-                : `${p.hiddenInvalid} rows needing attention are hidden by filters`}
+                : `${props.hiddenInvalid} rows needing attention are hidden by filters`}
             </span>
             <span aria-hidden="true"> · </span>
-            <button type="button" onClick={p.onShowHidden}>
+            <button type="button" onClick={props.onShowHidden}>
               Show them
             </button>
           </div>
         )}
       </div>
       <div className={s.actions}>
-        <button
-          type="button"
-          className="btn"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={p.onFind}
-          aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'}
-        >
-          <Icon name="search" />
-          Find <span className="kbd">{isMac ? '⌘K' : 'Ctrl+K'}</span>
-        </button>
-        {(count > 0 || p.onlyMissing) && (
+        <FindButton className="btn" onClick={props.onFind} />
+        {(count > 0 || props.onlyMissing) && (
           <button
             type="button"
-            className={cx('btn', count ? s.warn : s.done, p.onlyMissing && s.on)}
-            aria-pressed={p.onlyMissing}
-            title={missingSummary(p.invalid)}
-            onClick={p.onToggleMissing}
+            className={cx('btn', count ? s.warn : s.done, props.onlyMissing && s.on)}
+            aria-pressed={props.onlyMissing}
+            title={missingSummary(props.invalid)}
+            onClick={props.onToggleMissing}
           >
             {count === 0 ? 'Show all rows' : count === 1 ? '1 row needs attention' : `${count} rows need attention`}
           </button>
         )}
-        {p.anyFilter && (
-          <button type="button" className="btn" onClick={p.onClearFilters}>
+        {props.anyFilter && (
+          <button type="button" className="btn" onClick={props.onClearFilters}>
             Clear filters
           </button>
         )}

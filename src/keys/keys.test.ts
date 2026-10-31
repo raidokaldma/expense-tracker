@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { colMove, isMac, rowMove } from './keys';
+import { colMove, isMac, listMove, rowMove } from './keys';
 
-const key = (k: string, mod = false) => ({
-  key: k,
-  metaKey: mod && isMac,
-  ctrlKey: mod && !isMac,
-  altKey: false,
-  shiftKey: false,
-});
+function key(k: string, mod = false) {
+  return {
+    key: k,
+    metaKey: mod && isMac,
+    ctrlKey: mod && !isMac,
+    altKey: false,
+    shiftKey: false,
+  };
+}
 
 describe('rowMove', () => {
   it('moves one row, 15 per page, and to the edges with the modifier', () => {
@@ -20,7 +22,7 @@ describe('rowMove', () => {
 
   it('leaves plain Home / End to columns unless asked', () => {
     expect(rowMove(key('Home'), 50, 100)).toBeNull();
-    expect(rowMove(key('End'), 50, 100, true)).toBe(99);
+    expect(listMove(key('End'), 50, 100)).toBe(99);
   });
 });
 

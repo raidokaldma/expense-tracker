@@ -1,0 +1,23 @@
+/* zero specificity, so each dropdown's own styles win over these */
+:where(.dropdown) {
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  min-width: calc(100% + 2px);
+  width: max-content;
+  max-width: 340px;
+  max-height: 290px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  box-shadow: 0 10px 28px rgba(20, 24, 32, 0.18);
+  padding: 4px;
+  margin-top: 3px;
+  z-index: 20;
+}
+:where(.dropdown.opensUp) {
+  top: auto;
+  bottom: 100%;
+  margin: 0 0 3px;
+}

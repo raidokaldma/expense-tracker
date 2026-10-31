@@ -1,0 +1,42 @@
+/* the page fills the window; only the table (and the side panel's list) scroll */
+.root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.main {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 20px;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.pivotScroll {
+  flex: 999 1 720px;
+  min-width: 0;
+  align-self: stretch;
+  min-height: 240px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}

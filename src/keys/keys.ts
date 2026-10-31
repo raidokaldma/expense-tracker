@@ -4,11 +4,25 @@ export const isMac =
   typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
 /** ⌘ on macOS, Ctrl elsewhere. */
-export const isMod = (e: { metaKey: boolean; ctrlKey: boolean }) => (isMac ? e.metaKey : e.ctrlKey);
+export function isMod(e: { metaKey: boolean; ctrlKey: boolean }) {
+  return isMac ? e.metaKey : e.ctrlKey;
+}
+
+/** ⌘K on macOS, Ctrl+K elsewhere, without Alt or Shift. */
+export function isModKey(e: KeyLike, key: string) {
+  return isMod(e) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === key;
+}
 
 export const MOD_LABEL = isMac ? '⌘' : 'Ctrl+';
+export const ALT_LABEL = isMac ? '⌥' : 'Alt+';
+export const SHIFT_LABEL = isMac ? '⇧' : 'Shift+';
 
-export const PAGE_STEP = 15;
+/** The aria-keyshortcuts value for ⌘ / Ctrl plus `key`. */
+export function modAria(key: string) {
+  return `${isMac ? 'Meta' : 'Control'}+${key}`;
+}
+
+const PAGE_STEP = 15;
 
 /** The parts of a key event the keyboard rules read. */
 export interface KeyLike {
@@ -20,11 +34,19 @@ export interface KeyLike {
 }
 
 /**
- * Vertical movement in any list or grid: ↑ ↓ one, ⌘↑ ⌘↓ first / last, Page Up / Down 15, ⌘Home / ⌘End first / last.
- * Plain Home / End move rows only in lists (`homeEndRows`); in grids they move columns, in text boxes the caret.
- * Returns the new index, or null when the key is not a movement key.
+ * Vertical movement in a grid: ↑ ↓ one, ⌘↑ ⌘↓ first / last, Page Up / Down 15, ⌘Home / ⌘End first / last.
+ * Plain Home / End are left to the columns. Returns the new index, or null when the key is not a movement key.
  */
-export function rowMove(e: KeyLike, index: number, count: number, homeEndRows = false): number | null {
+export function rowMove(e: KeyLike, index: number, count: number) {
+  return verticalMove(e, index, count, false);
+}
+
+/** Movement in a list: as in a grid, and plain Home / End go to the first / last item too. */
+export function listMove(e: KeyLike, index: number, count: number) {
+  return verticalMove(e, index, count, true);
+}
+
+function verticalMove(e: KeyLike, index: number, count: number, homeEndRows: boolean): number | null {
   if (count <= 0) return null;
   const last = count - 1;
   const mod = isMod(e);
@@ -64,7 +86,9 @@ export function colMove(e: KeyLike, index: number, count: number): number | null
   }
 }
 
-export const isMoveKey = (key: string) => /^(Arrow|Page|Home$|End$|Tab$)/.test(key);
+function isMoveKey(key: string) {
+  return /^(Arrow|Page|Home$|End$|Tab$)/.test(key);
+}
 
 /**
  * A held key repeats faster than a list can redraw. Repeats are dropped until the last move has been painted,
@@ -87,7 +111,7 @@ export class RepeatGuard {
   }
 }
 
-export type PagePath = '/transactions' | '/overview' | '/settings';
+type PagePath = '/transactions' | '/overview' | '/settings';
 
 /** ⌥T / ⌥O / ⌥S (Alt+T / Alt+O / Alt+S); matched by physical key because ⌥T types "†" on macOS. */
 export function pageShortcut(e: KeyboardEvent): PagePath | null {
@@ -99,7 +123,7 @@ export function pageShortcut(e: KeyboardEvent): PagePath | null {
 }
 
 export const PAGE_KEY_LABELS = {
-  transactions: isMac ? '⌥T' : 'Alt+T',
-  overview: isMac ? '⌥O' : 'Alt+O',
-  settings: isMac ? '⌥S' : 'Alt+S',
+  transactions: `${ALT_LABEL}T`,
+  overview: `${ALT_LABEL}O`,
+  settings: `${ALT_LABEL}S`,
 };

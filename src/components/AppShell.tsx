@@ -1,9 +1,8 @@
-import { NavLink, Outlet, useNavigate } from 'react-router';
-import { isMac, isMod, PAGE_KEY_LABELS, pageShortcut } from '../keys/keys';
-import { SHORTCUTS_KEY } from '../keys/shortcuts';
+import { Outlet, useNavigate } from 'react-router';
+import { isModKey, pageShortcut } from '../keys/keys';
 import { useWindowKeyDown } from '../keys/useWindowKeyDown';
 import { useStore } from '../store/store';
-import { Icon } from './icons';
+import s from './AppShell.module.css';
 import { openShortcuts, ShortcutsDialog } from './ShortcutsDialog';
 import { Toaster } from './Toaster';
 import { useRefreshOnReturn } from './useRefreshOnReturn';
@@ -14,13 +13,13 @@ import { useRefreshOnReturn } from './useRefreshOnReturn';
  */
 export function AppShell() {
   const navigate = useNavigate();
-  const status = useStore((s) => s.status);
-  const error = useStore((s) => s.error);
+  const status = useStore((st) => st.status);
+  const error = useStore((st) => st.error);
   useRefreshOnReturn();
 
   useWindowKeyDown(
     (e) => {
-      if (isMod(e) && !e.altKey && !e.shiftKey && e.key === '/') {
+      if (isModKey(e, '/')) {
         e.preventDefault();
         openShortcuts();
         return;
@@ -37,68 +36,12 @@ export function AppShell() {
   );
 
   return (
-    <div className="app">
-      {status === 'loading' && <p className="loading">Loading…</p>}
-      {status === 'error' && <p className="loading">Could not reach the server: {error}</p>}
+    <div className={s.app}>
+      {status === 'loading' && <p className={s.loading}>Loading…</p>}
+      {status === 'error' && <p className={s.loading}>Could not reach the server: {error}</p>}
       {status === 'ready' && <Outlet />}
       <Toaster />
       <ShortcutsDialog />
     </div>
-  );
-}
-
-export function PageHeader({ title }: { title: string }) {
-  return (
-    <header className="app-header">
-      <div className="app-title">
-        <Icon name="table" size={20} weight={1.8} />
-        <h1>{title}</h1>
-      </div>
-      <nav className="app-nav" aria-label="Main">
-        <NavLink
-          to="/transactions"
-          className={({ isActive }) => (isActive ? 'nav active' : 'nav')}
-          aria-keyshortcuts="Alt+T"
-        >
-          Transactions
-          <span className="nkbd" aria-hidden="true">
-            {PAGE_KEY_LABELS.transactions}
-          </span>
-        </NavLink>
-        <NavLink
-          to="/overview"
-          className={({ isActive }) => (isActive ? 'nav active' : 'nav')}
-          aria-keyshortcuts="Alt+O"
-        >
-          Overview
-          <span className="nkbd" aria-hidden="true">
-            {PAGE_KEY_LABELS.overview}
-          </span>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={({ isActive }) => (isActive ? 'nav active' : 'nav')}
-          aria-keyshortcuts="Alt+S"
-        >
-          Settings
-          <span className="nkbd" aria-hidden="true">
-            {PAGE_KEY_LABELS.settings}
-          </span>
-        </NavLink>
-        <button
-          type="button"
-          className="nav"
-          // the focus stays on the page, so closing the dialog returns to it
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={openShortcuts}
-          aria-keyshortcuts={isMac ? 'Meta+/' : 'Control+/'}
-        >
-          Shortcuts
-          <span className="nkbd" aria-hidden="true">
-            {SHORTCUTS_KEY}
-          </span>
-        </button>
-      </nav>
-    </header>
   );
 }

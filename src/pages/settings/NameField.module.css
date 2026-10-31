@@ -1,0 +1,6 @@
+.err {
+  padding: 4px 16px 6px 40px;
+  font-size: 12px;
+  color: var(--neg-ink);
+  background: var(--neg-tint);
+}

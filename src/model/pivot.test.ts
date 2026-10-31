@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { Category, Timestamp } from '../../shared/types';
 import { buildPivot, periodMonths } from './pivot';
 import { categories, groups, tx } from './testData';
-import type { Category, Timestamp } from './types';
 
-const run = (transactions: ReturnType<typeof tx>[]) =>
-  buildPivot({
+function run(transactions: ReturnType<typeof tx>[]) {
+  return buildPivot({
     transactions,
     groups,
     categories,
@@ -13,6 +13,7 @@ const run = (transactions: ReturnType<typeof tx>[]) =>
     showHidden: false,
     collapsed: new Set(),
   });
+}
 
 describe('buildPivot', () => {
   it('shows transfers in their own block but leaves them out of Net; invalid rows are left out', () => {

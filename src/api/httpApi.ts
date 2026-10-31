@@ -1,8 +1,8 @@
-import type { Issue } from '../model/schemas';
-import type { Api } from '../model/types';
+import type { Issue } from '../../shared/schemas';
+import type { Api } from './api';
 
 /** An error answer from the server; issues name the fields a request got wrong. */
-export class ApiError extends Error {
+class ApiError extends Error {
   readonly status: number;
   readonly issues: Issue[];
   constructor(status: number, message: string, issues: Issue[] = []) {
@@ -12,10 +12,11 @@ export class ApiError extends Error {
   }
 }
 
-type Fetch = (url: string, init: RequestInit) => Promise<Response>;
+export type Fetch = (url: string, init: RequestInit) => Promise<Response>;
 
-/** The Api over HTTP. */
-export function createHttpApi(fetchFn: Fetch = (url, init) => fetch(url, init), base = '/api'): Api {
+export const browserFetch: Fetch = (url, init) => fetch(url, init);
+
+export function createHttpApi(fetchFn: Fetch = browserFetch, base = '/api'): Api {
   async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const res = await fetchFn(base + path, {
       method,

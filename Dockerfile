@@ -14,7 +14,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 COPY server ./server
-COPY src/model ./src/model
+COPY shared ./shared
 COPY seed.example.json ./
 RUN mkdir -p /data && chown node:node /data
 USER node

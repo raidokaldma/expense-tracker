@@ -1,0 +1,204 @@
+.pivotGrid {
+  outline: none;
+}
+.pivotRow {
+  display: grid;
+  background: #fff;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pivotCell {
+  height: 30px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-right: 1px solid var(--line-soft);
+  position: relative;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+.pivotCell:last-child {
+  border-right: 0;
+}
+.pivotLabel {
+  height: 30px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid #e3e6eb;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 0;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: inherit;
+  box-shadow: 2px 0 4px -2px rgba(20, 24, 32, 0.12);
+}
+.dimmed .labelText,
+.dimmed .pivotCell {
+  opacity: 0.5;
+}
+.dimmed .labelText {
+  font-style: italic;
+}
+.pivotRow:hover .eye,
+.eye.visible {
+  opacity: 1;
+}
+.child .pivotLabel {
+  padding-left: 38px;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.parent {
+  background: #eef1f5;
+  border-top: 1px solid var(--line);
+}
+.parent .pivotLabel {
+  font-weight: 700;
+}
+.parent .pivotCell {
+  font-weight: 700;
+  color: var(--ink);
+}
+.parent .pivotCell.pos {
+  color: #14532d;
+}
+.parent .pivotCell.zero {
+  color: #6b7280;
+  font-weight: 500;
+}
+.parent .pivotCell.totalColumn {
+  background: rgba(20, 24, 32, 0.05);
+}
+.child .pivotCell {
+  color: var(--ink-3);
+}
+.child .pivotCell.pos {
+  color: var(--pos);
+}
+.child .pivotCell.zero {
+  color: var(--faint);
+}
+.pivotHeader {
+  background: var(--hover);
+  border-bottom-color: var(--line);
+  /* the month titles stay in view */
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.pivotHeader .pivotCell,
+.pivotHeader .pivotLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pivotSection {
+  background: #fafbfc;
+  border-bottom-color: #e3e6eb;
+}
+.pivotSectionTitle {
+  grid-column: 1;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: inherit;
+  padding: 14px 12px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.total {
+  background: #f7f8fa;
+  font-weight: 600;
+  border-bottom-color: var(--line);
+}
+.total .pivotLabel {
+  font-weight: 600;
+}
+.net {
+  background: var(--ink);
+  color: #fff;
+  border-bottom: 0;
+  /* Net stays in view as the table's footer */
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+}
+.net .pivotCell,
+.net .pivotLabel {
+  border-right-color: #2f3440;
+  font-weight: 700;
+}
+.net .pivotCell.pos {
+  color: #86d9a9;
+}
+.net .pivotCell.zero {
+  color: var(--faint);
+}
+.net .pivotCell.totalColumn {
+  background: rgba(255, 255, 255, 0.05);
+}
+.totalColumn {
+  background: rgba(20, 24, 32, 0.03);
+  font-weight: 600;
+}
+/* the active cell's row, as on Transactions; the dark Net row keeps its colour */
+.pivotRow.currentRow:not(.net) {
+  background: var(--accent-tint);
+}
+/* beats the shading of total columns and rows */
+.pivotRow .pivotCell.selected {
+  background: #dfe8fb;
+}
+.net .pivotCell.selected {
+  background: rgba(143, 176, 245, 0.28);
+}
+.net .active {
+  outline-color: #8fb0f5;
+}
+.pivotGrid:not(:focus-within) .active {
+  outline-color: #a9b1be;
+}
+.eye {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  padding: 0;
+  border-radius: 4px;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+}
+.eye:hover {
+  background: #e8ebf0;
+  color: var(--ink);
+}
+.labelText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.zero {
+  color: var(--faint);
+}
+.pivotCell.pos {
+  color: var(--pos);
+}
+.active {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  z-index: 2;
+}

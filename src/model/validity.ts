@@ -1,4 +1,4 @@
-import type { MissingFields, RequiredField, Transaction } from './types';
+import type { MissingFields, RequiredField, Transaction } from '../../shared/types';
 
 /** Every visible field except Description is required. */
 export const REQUIRED_FIELDS: RequiredField[] = ['accountId', 'occurredAt', 'counterparty', 'amount', 'categoryId'];
@@ -11,8 +11,14 @@ export const REQUIRED_LABELS: Record<RequiredField, string> = {
   categoryId: 'category',
 };
 
-export const isBlank = (v: unknown) => v == null || v === '';
+export function isBlank(v: unknown) {
+  return v == null || v === '';
+}
 
-export const missingFields = (t: Transaction): MissingFields => REQUIRED_FIELDS.filter((f) => isBlank(t[f]));
+export function missingFields(t: Transaction): MissingFields {
+  return REQUIRED_FIELDS.filter((f) => isBlank(t[f]));
+}
 
-export const isValid = (t: Transaction) => REQUIRED_FIELDS.every((f) => !isBlank(t[f]));
+export function isValid(t: Transaction) {
+  return REQUIRED_FIELDS.every((f) => !isBlank(t[f]));
+}

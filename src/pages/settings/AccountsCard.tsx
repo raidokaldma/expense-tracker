@@ -1,16 +1,24 @@
 import { type KeyboardEvent, useMemo, useRef, useState } from 'react';
+import { sameName } from '../../../shared/names';
+import type { Account, AccountId } from '../../../shared/types';
 import { cx } from '../../components/cx';
-import { RepeatGuard, rowMove } from '../../keys/keys';
+import { listMove } from '../../keys/keys';
+import { useRepeatGuard } from '../../keys/useRepeatGuard';
 import { countBy } from '../../model/countBy';
-import { sameName } from '../../model/names';
 import { plural } from '../../model/plural';
-import type { Account, AccountId } from '../../model/types';
-import { createAccount, removeAccount, renameAccount, showToast, useStore } from '../../store/store';
+import { createAccount, removeAccount, renameAccount } from '../../store/settings';
+import { useStore } from '../../store/store';
+import { showToast } from '../../store/toast';
+import s from './AccountsCard.module.css';
+import card from './card.module.css';
 import { IconButton } from './IconButton';
+import list from './list.module.css';
 import { FieldError, NameField } from './NameField';
-import s from './settings.module.css';
 
-const NEW = 'new';
+/** Adding an account in the row at the end of the list, or renaming one in place. */
+type AccountEdit =
+  | { mode: 'add'; text: string; error: string }
+  | { mode: 'rename'; id: AccountId; text: string; error: string };
 
 /**
  * Accounts: N (or New account) adds one, Enter renames the selected one, Del deletes it when it has no
@@ -23,10 +31,9 @@ export function AccountsCard() {
   const transactionCounts = useMemo(() => countBy(transactions, (t) => t.accountId), [transactions]);
   const countFor = (account: Account) => transactionCounts.get(account.id) ?? 0;
   const [selected, setSelected] = useState(0);
-  // the account being renamed, or NEW for the add row at the end of the list
-  const [edit, setEdit] = useState<{ id: AccountId | typeof NEW; text: string; error: string } | null>(null);
+  const [edit, setEdit] = useState<AccountEdit | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const repeatGuard = useRef(new RepeatGuard()).current;
+  const repeatGuard = useRepeatGuard();
   const index = Math.min(selected, Math.max(0, sorted.length - 1));
   const focusList = () => listRef.current?.focus({ preventScroll: true });
 
@@ -37,8 +44,9 @@ export function AccountsCard() {
     setEdit(null);
   };
 
-  const startAdd = () => setEdit({ id: NEW, text: '', error: '' });
-  const startRename = (account: Account) => setEdit({ id: account.id, text: account.name, error: '' });
+  const startAdd = () => setEdit({ mode: 'add', text: '', error: '' });
+  const isRenaming = (id: AccountId) => edit?.mode === 'rename' && edit.id === id;
+  const startRename = (account: Account) => setEdit({ mode: 'rename', id: account.id, text: account.name, error: '' });
 
   function remove(account: Account) {
     const count = countFor(account);
@@ -57,12 +65,12 @@ export function AccountsCard() {
     if (!edit || closed.current === edit) return;
     const name = edit.text.trim();
     // leaving an empty add row just closes it
-    if (edit.id === NEW && !name) {
+    if (edit.mode === 'add' && !name) {
       close();
       focusList();
       return;
     }
-    const clash = sorted.find((a) => a.id !== edit.id && sameName(a.name, name));
+    const clash = sorted.find((a) => (edit.mode === 'add' || a.id !== edit.id) && sameName(a.name, name));
     const error = !name ? 'Enter a name' : clash ? `“${clash.name}” already exists` : '';
     if (error) {
       if (cancelOnError) close();
@@ -70,7 +78,7 @@ export function AccountsCard() {
       return;
     }
     close();
-    if (edit.id === NEW) {
+    if (edit.mode === 'add') {
       const created = await createAccount(name);
       setSelected([...sorted, created].sort((a, b) => a.name.localeCompare(b.name)).indexOf(created));
       showToast(`Added account “${name}”`);
@@ -87,7 +95,7 @@ export function AccountsCard() {
       e.preventDefault();
       return;
     }
-    const next = rowMove(e, index, sorted.length, true);
+    const next = listMove(e, index, sorted.length);
     if (next != null) {
       e.preventDefault();
       setSelected(next);
@@ -113,7 +121,7 @@ export function AccountsCard() {
     edit && (
       <NameField
         label={label}
-        placeholder={edit.id === NEW ? 'New account' : undefined}
+        placeholder={edit.mode === 'add' ? 'New account' : undefined}
         text={edit.text}
         error={edit.error}
         onText={(text) => setEdit({ ...edit, text, error: '' })}
@@ -123,11 +131,9 @@ export function AccountsCard() {
       />
     );
 
-  const errorRow = (id: AccountId | typeof NEW) => edit?.id === id && <FieldError error={edit.error} />;
-
   return (
-    <div className={s.card}>
-      <div className={s.cardhead}>
+    <div className={cx(card.card, card.padded)}>
+      <div className={s.cardHeader}>
         <h2>Accounts</h2>
         <button
           type="button"
@@ -140,7 +146,7 @@ export function AccountsCard() {
         </button>
       </div>
       <div
-        className={s.alist}
+        className={list.accountList}
         role="listbox"
         aria-label="Accounts"
         aria-activedescendant={sorted.length ? `a-${sorted[index].id}` : undefined}
@@ -148,13 +154,13 @@ export function AccountsCard() {
         onKeyDown={onKey}
         ref={listRef}
       >
-        {!sorted.length && edit?.id !== NEW && <p className={s.emptyrow}>No accounts yet</p>}
+        {!sorted.length && edit?.mode !== 'add' && <p className={list.emptyRow}>No accounts yet</p>}
         {sorted.map((account, i) => {
           const count = countFor(account);
           return (
             <div key={account.id}>
               <div
-                className={cx(s.arow, i === index && s.sel)}
+                className={cx(list.accountRow, i === index && list.selected)}
                 id={`a-${account.id}`}
                 role="option"
                 aria-selected={i === index}
@@ -166,13 +172,13 @@ export function AccountsCard() {
                 }}
                 onDoubleClick={() => startRename(account)}
               >
-                {edit?.id === account.id ? (
+                {isRenaming(account.id) ? (
                   nameInput('Account name')
                 ) : (
                   <>
-                    <span className={s.name}>{account.name}</span>
-                    <span className={s.spacer} />
-                    <span className={s.acts}>
+                    <span className={list.name}>{account.name}</span>
+                    <span className={list.spacer} />
+                    <span className={list.rowActions}>
                       <IconButton
                         icon="pen"
                         label={`Rename ${account.name}`}
@@ -191,14 +197,14 @@ export function AccountsCard() {
                   </>
                 )}
               </div>
-              {errorRow(account.id)}
+              {edit && isRenaming(account.id) && <FieldError error={edit.error} />}
             </div>
           );
         })}
-        {edit?.id === NEW && (
+        {edit?.mode === 'add' && (
           <>
-            <div className={cx(s.addrow, s.forgroup)}>{nameInput('New account name')}</div>
-            {errorRow(NEW)}
+            <div className={cx(list.addRow, list.forGroup)}>{nameInput('New account name')}</div>
+            <FieldError error={edit.error} />
           </>
         )}
       </div>

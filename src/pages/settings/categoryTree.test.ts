@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { CategoryGroupId, CategoryId } from '../../model/types';
+import type { CategoryGroupId, CategoryId } from '../../../shared/types';
+import { describeChanges } from './categoryChanges';
 import {
   addGroup,
-  describeChanges,
   type EditableGroup,
   moveCategory,
   nameError,
@@ -12,17 +12,14 @@ import {
   treeHas,
 } from './categoryTree';
 
-const g = (
-  id: string,
-  name: string,
-  cats: [string, string][],
-  kind: EditableGroup['kind'] = 'expense',
-): EditableGroup => ({
-  id: id as CategoryGroupId,
-  name,
-  kind,
-  categories: cats.map(([cid, cname]) => ({ id: cid as CategoryId, name: cname })),
-});
+function g(id: string, name: string, cats: [string, string][], kind: EditableGroup['kind'] = 'expense'): EditableGroup {
+  return {
+    id: id as CategoryGroupId,
+    name,
+    kind,
+    categories: cats.map(([cid, cname]) => ({ id: cid as CategoryId, name: cname })),
+  };
+}
 
 const saved = [
   g('food', 'Food', [
@@ -32,7 +29,9 @@ const saved = [
   g('home', 'Housing', [['rent', 'Rent']]),
 ];
 
-const names = (tree: EditableGroup[]) => tree.map((x) => [x.name, x.categories.map((c) => c.name)]);
+function names(tree: EditableGroup[]) {
+  return tree.map((x) => [x.name, x.categories.map((c) => c.name)]);
+}
 
 describe('category tree edits', () => {
   it('rename groups and categories without changing the tree they were given', () => {

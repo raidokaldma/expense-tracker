@@ -3,8 +3,9 @@ import { mod, openWithDemo, resetData } from './helpers';
 
 // Scenarios from the code review; each failed before its fix.
 
-const activeCell = (page: Page) =>
-  page.getByRole('grid', { name: 'Transactions' }).getAttribute('aria-activedescendant');
+function activeCell(page: Page) {
+  return page.getByRole('grid', { name: 'Transactions' }).getAttribute('aria-activedescendant');
+}
 
 test.beforeEach(({ page }) => resetData(page));
 
@@ -101,7 +102,7 @@ test('Overview periods are calendar months up to now', async ({ page }) => {
 
 test('renaming an account sends one request; Esc sends none', async ({ page }) => {
   const writes: string[] = [];
-  page.on('console', (m) => /^(POST|PATCH) \/accounts/.test(m.text()) && writes.push(m.text().split(' ')[0]));
+  page.on('console', (m) => /^(POST|PATCH) \/api\/accounts/.test(m.text()) && writes.push(m.text().split(' ')[0]));
   await page.goto('/#/settings');
   await page.getByRole('listbox', { name: 'Accounts' }).focus();
   await page.keyboard.press('n');

@@ -1,12 +1,11 @@
 import { type KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { isMod, RepeatGuard, rowMove } from '../keys/keys';
+import type { Transaction, TransactionId } from '../../shared/types';
+import { isMod, rowMove } from '../keys/keys';
+import { useRepeatGuard } from '../keys/useRepeatGuard';
 import type { Lookup } from '../model/lookup';
-import { formatAmount } from '../model/money';
 import { searchTransactions } from '../model/search';
-import { formatTimestamp } from '../model/time';
-import type { Transaction, TransactionId } from '../model/types';
-import { cx } from './cx';
-import s from './findDialog.module.css';
+import s from './FindDialog.module.css';
+import { FindResult } from './FindResult';
 import { Icon } from './icons';
 import { keepInView } from './scroll';
 
@@ -19,14 +18,14 @@ interface Props {
 
 /** ⌘K quick jump: type any value, Enter goes to the transaction. */
 export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
-  const [q, setQ] = useState('');
+  const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const guard = useRef(new RepeatGuard()).current;
+  const guard = useRepeatGuard();
   const pointer = useRef('');
-  const results = useMemo(() => searchTransactions(rows, q, lookup), [rows, q, lookup]);
-  const i = Math.min(active, Math.max(0, results.length - 1));
+  const results = useMemo(() => searchTransactions(rows, query, lookup), [rows, query, lookup]);
+  const highlighted = Math.min(active, Math.max(0, results.length - 1));
 
   useLayoutEffect(() => {
     inputRef.current?.focus();
@@ -36,7 +35,7 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: reads the DOM after the highlight has moved
   useLayoutEffect(() => {
     keepInView(listRef.current, listRef.current?.querySelector('[aria-selected="true"]'), 4);
-  }, [i]);
+  }, [highlighted]);
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -47,7 +46,7 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
     }
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (results[i]) onPick(results[i].id);
+      if (results[highlighted]) onPick(results[highlighted].id);
       return;
     }
     if (isMod(e) && e.key.toLowerCase() === 'k') {
@@ -55,7 +54,7 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
       return;
     }
     // same moves as the grid; plain Home / End stay with the text box
-    const next = rowMove(e, i, results.length);
+    const next = rowMove(e, highlighted, results.length);
     if (next == null) return;
     e.preventDefault();
     if (guard.blocks(e)) return;
@@ -64,15 +63,15 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
   };
 
   return (
-    <div className={s.jback} onMouseDown={onClose}>
+    <div className={s.backdrop} onMouseDown={onClose}>
       <div
-        className={s.jbox}
+        className={s.dialog}
         role="dialog"
         aria-modal="true"
         aria-label="Find a transaction"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className={s.jin}>
+        <div className={s.input}>
           <Icon name="search" size={18} />
           <input
             ref={inputRef}
@@ -82,10 +81,10 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
             role="combobox"
             aria-expanded="true"
             aria-controls="jlist"
-            aria-activedescendant={results[i] ? `j-${results[i].id}` : undefined}
-            value={q}
+            aria-activedescendant={results[highlighted] ? `j-${results[highlighted].id}` : undefined}
+            value={query}
             onChange={(e) => {
-              setQ(e.target.value);
+              setQuery(e.target.value);
               setActive(0);
               if (listRef.current) listRef.current.scrollTop = 0;
             }}
@@ -95,43 +94,26 @@ export function FindDialog({ rows, lookup, onPick, onClose }: Props) {
             spellCheck={false}
           />
         </div>
-        <div className={s.jlist} id="jlist" role="listbox" aria-label="Matching transactions" ref={listRef}>
-          {results.map((t, k) => (
-            <div
+        <div className={s.results} id="jlist" role="listbox" aria-label="Matching transactions" ref={listRef}>
+          {results.map((t, index) => (
+            <FindResult
               key={t.id}
-              className={cx(s.jitem, k === i && s.hi)}
-              id={`j-${t.id}`}
-              role="option"
-              aria-selected={k === i}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onPick(t.id);
-              }}
+              transaction={t}
+              lookup={lookup}
+              highlighted={index === highlighted}
+              onPick={() => onPick(t.id)}
               onMouseMove={(e) => {
                 // only real pointer movement highlights; the list scrolling under a still pointer does not
-                const p = `${e.clientX},${e.clientY}`;
-                if (p === pointer.current) return;
-                pointer.current = p;
-                if (k !== i) setActive(k);
+                const position = `${e.clientX},${e.clientY}`;
+                if (position === pointer.current) return;
+                pointer.current = position;
+                if (index !== highlighted) setActive(index);
               }}
-            >
-              <span className={s.jd}>{t.occurredAt ? formatTimestamp(t.occurredAt) : '—'}</span>
-              <span className={s.jmain}>
-                <span>{t.counterparty || '(no recipient)'}</span>
-                <span className={s.jmeta}>
-                  {[lookup.accountName(t.accountId), lookup.categoryName(t.categoryId) || 'No category', t.description]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </span>
-              </span>
-              <span className={cx(s.jamt, t.amount != null && t.amount > 0 && 'pos')}>
-                {t.amount == null ? '—' : formatAmount(t.amount)}
-              </span>
-            </div>
+            />
           ))}
-          {results.length === 0 && <p className={s.jnone}>No matching transactions.</p>}
+          {results.length === 0 && <p className={s.noResults}>No matching transactions.</p>}
         </div>
-        <div className={s.jhelp}>
+        <div className={s.help}>
           <span>
             <code>rimi cash</code> all words must match
           </span>

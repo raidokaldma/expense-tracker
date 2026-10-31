@@ -1,6 +1,6 @@
+import type { NewTransaction, Transaction, TransactionId } from '../../../shared/types';
 import type { Lookup } from '../../model/lookup';
 import { amountMatches } from '../../model/money';
-import type { NewTransaction, Transaction, TransactionId } from '../../model/types';
 import { isValid } from '../../model/validity';
 import { COLS, displayText, draftRow, type Filters } from './columns';
 

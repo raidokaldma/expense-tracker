@@ -1,13 +1,14 @@
-import { useStore } from '../store/store';
+import { useToast } from '../store/toast';
 import { cx } from './cx';
+import s from './Toaster.module.css';
 
 /** The latest toast (see showToast), at the bottom of every page; it never takes the focus. */
 export function Toaster() {
-  const toast = useStore((s) => s.toast);
+  const toast = useToast((st) => st.toast);
   return (
-    <div className="toaster" role="status" aria-live="polite">
+    <div className={s.toaster} role="status" aria-live="polite">
       {toast && (
-        <div key={toast.seq} className={cx('toast', toast.warn && 'warn')}>
+        <div key={toast.seq} className={cx(s.toast, toast.warn && s.warn)}>
           <span>{toast.text}</span>
           {toast.action && (
             <button

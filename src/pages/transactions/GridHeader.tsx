@@ -1,13 +1,14 @@
 import type { KeyboardEvent } from 'react';
+import type { TransactionSort } from '../../../shared/types';
 import { cx } from '../../components/cx';
 import { Icon } from '../../components/icons';
 import { COLS, type ColKey, type Filters } from './columns';
-import type { SortBy } from './rowOrder';
-import s from './transactions.module.css';
+import s from './GridHeader.module.css';
+import grid from './TransactionsGrid.module.css';
 
 interface Props {
   filters: Filters;
-  sortBy: SortBy;
+  sortBy: TransactionSort;
   filterRef: (key: ColKey, el: HTMLInputElement | null) => void;
   onToggleSort: () => void;
   onFilterChange: (key: ColKey, value: string) => void;
@@ -26,39 +27,39 @@ export function GridHeader({ filters, sortBy, filterRef, onToggleSort, onFilterC
 
   return (
     <>
-      <div className={cx(s.row, s.hdr)} role="row">
-        <div className={cx(s.cell, s.idx)} role="columnheader">
-          <span className={s.hlabel}>#</span>
+      <div className={cx(grid.row, s.headerRow)} role="row">
+        <div className={cx(grid.cell, grid.rowNumber)} role="columnheader">
+          <span className={s.headerLabel}>#</span>
         </div>
         {COLS.map((column) => (
           <div
             key={column.key}
-            className={cx(s.cell, column.num && s.num, (filters[column.key] || '').trim() && s.filtered)}
+            className={cx(grid.cell, column.num && grid.num, (filters[column.key] || '').trim() && s.filtered)}
             role="columnheader"
             aria-sort={column.key === 'occurredAt' && sortBy === 'occurredAt' ? 'descending' : 'none'}
           >
             {column.key === 'occurredAt' ? (
               <button
                 type="button"
-                className={s.sortbtn}
+                className={s.sortButton}
                 onClick={onToggleSort}
                 title="Toggle order: import date / transaction date"
               >
-                <span className={s.hlabel}>{column.label}</span>
-                <span className={s.sortby}>↓ {sortBy === 'addedAt' ? 'import' : 'date'}</span>
+                <span className={s.headerLabel}>{column.label}</span>
+                <span className={s.sortBy}>↓ {sortBy === 'addedAt' ? 'import' : 'date'}</span>
               </button>
             ) : (
-              <span className={s.hlabel}>{column.label}</span>
+              <span className={s.headerLabel}>{column.label}</span>
             )}
           </div>
         ))}
       </div>
-      <div className={cx(s.row, s.frow)} role="row">
-        <div className={cx(s.cell, s.idx)} role="gridcell">
+      <div className={cx(grid.row, s.filterRow)} role="row">
+        <div className={cx(grid.cell, grid.rowNumber)} role="gridcell">
           <Icon name="filter" />
         </div>
         {COLS.map((column, col) => (
-          <div key={column.key} className={cx(s.cell, s.fcell)} role="gridcell">
+          <div key={column.key} className={cx(grid.cell, s.filterCell)} role="gridcell">
             <input
               className={cx(s.filter, filters[column.key] && s.filled)}
               type="text"
@@ -74,7 +75,7 @@ export function GridHeader({ filters, sortBy, filterRef, onToggleSort, onFilterC
             {filters[column.key] && (
               <button
                 type="button"
-                className={s.clearfilter}
+                className={s.clearFilter}
                 tabIndex={-1}
                 aria-label={`Clear the ${column.label} filter`}
                 title="Clear filter (Esc)"

@@ -1,15 +1,16 @@
-import { type KeyboardEvent, type RefObject, useLayoutEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, type RefObject, useLayoutEffect, useState } from 'react';
+import { formatShort } from '../../../shared/time';
+import type { Transaction, TransactionId } from '../../../shared/types';
 import { cx } from '../../components/cx';
 import { Icon } from '../../components/icons';
 import { keepInView } from '../../components/scroll';
-import { RepeatGuard, rowMove } from '../../keys/keys';
+import { listMove } from '../../keys/keys';
+import { useRepeatGuard } from '../../keys/useRepeatGuard';
 import type { Lookup } from '../../model/lookup';
 import { formatAmount } from '../../model/money';
 import { plural } from '../../model/plural';
-import { pad2, toLocal } from '../../model/time';
-import type { Transaction, TransactionId } from '../../model/types';
-import s from './overview.module.css';
 import type { PanelContent } from './panelContent';
+import s from './TransactionsPanel.module.css';
 
 interface Props {
   /** The selected cells' transactions, or null when no cell is selected. */
@@ -32,7 +33,7 @@ interface Props {
  */
 export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen, onLeave, startId }: Props) {
   const [inList, setInList] = useState(false);
-  const repeatGuard = useRef(new RepeatGuard()).current;
+  const repeatGuard = useRepeatGuard();
 
   const items = content?.items ?? [];
   const [cursor, setCursor] = useState(() =>
@@ -47,7 +48,7 @@ export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen,
   // keeps the active transaction inside the list's scroll area
   // biome-ignore lint/correctness/useExhaustiveDependencies: reads the DOM after these values have been drawn
   useLayoutEffect(() => {
-    keepInView(listRef.current, listRef.current?.querySelector(`.${s.ditem}.${s.active}`));
+    keepInView(listRef.current, listRef.current?.querySelector(`.${s.panelItem}.${s.current}`));
   }, [index, inList]);
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
@@ -55,7 +56,7 @@ export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen,
       e.preventDefault();
       return;
     }
-    const next = rowMove(e, index, items.length, true);
+    const next = listMove(e, index, items.length);
     if (next != null) {
       e.preventDefault();
       setCursor(next);
@@ -71,22 +72,22 @@ export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen,
 
   if (!content)
     return (
-      <aside className={s.drill} aria-label="Transactions in the selected cell">
-        <div className={s.dempty}>
+      <aside className={s.drillPanel} aria-label="Transactions in the selected cell">
+        <div className={s.panelEmpty}>
           <Icon name="table" size={22} weight={1.8} />
-          <div className={s.dtitle}>{emptyText}</div>
+          <div className={s.panelTitle}>{emptyText}</div>
         </div>
       </aside>
     );
 
   return (
-    <aside className={s.drill} aria-label="Transactions in the selected cell">
-      <div className={s.dhead}>
-        <div className={s.dtitle}>{content.title}</div>
-        <div className={s.dsub}>{content.subtitle}</div>
+    <aside className={s.drillPanel} aria-label="Transactions in the selected cell">
+      <div className={s.panelHeader}>
+        <div className={s.panelTitle}>{content.title}</div>
+        <div className={s.panelSubtitle}>{content.subtitle}</div>
       </div>
       <div
-        className={s.dlist}
+        className={s.panelList}
         role="listbox"
         aria-label="Transactions in this cell"
         tabIndex={0}
@@ -103,16 +104,18 @@ export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen,
             <div
               key={t.id}
               id={`d-${t.id}`}
-              className={cx(s.ditem, active && s.active)}
+              className={cx(s.panelItem, active && s.current)}
               role="option"
               aria-selected={active}
               onClick={() => onOpen(t)}
             >
-              <span className={cx('mono', s.dd)}>{shortDate(t, content.showYear)}</span>
-              <span className={s.dp}>
+              <span className={cx('mono', s.itemDate)}>
+                {formatShort(t.occurredAt!, { withYear: content.showYear })}
+              </span>
+              <span className={s.itemPayee}>
                 <span>{t.counterparty}</span>
-                {t.description && <span className={s.ddesc}>{t.description}</span>}
-                <span className={s.da}>
+                {t.description && <span className={s.itemDescription}>{t.description}</span>}
+                <span className={s.itemMeta}>
                   {lookup.accountName(t.accountId)}
                   {content.showCategory ? ` · ${lookup.categoryName(t.categoryId)}` : ''}
                 </span>
@@ -121,19 +124,12 @@ export function TransactionsPanel({ content, emptyText, lookup, listRef, onOpen,
             </div>
           );
         })}
-        {items.length === 0 && <p className={s.dnone}>No transactions in this cell.</p>}
+        {items.length === 0 && <p className={s.panelNoItems}>No transactions in this cell.</p>}
       </div>
-      <div className={s.dfoot}>
+      <div className={s.panelFooter}>
         <span>{plural(items.length, 'transaction')}</span>
         <span className="mono">{formatAmount(total)}</span>
       </div>
     </aside>
   );
-}
-
-/** "20.10 14:30", with the year ("20.10.26 14:30") when the list spans months. */
-function shortDate(t: Transaction, withYear: boolean) {
-  const p = toLocal(t.occurredAt!);
-  const year = withYear ? `.${String(p.y).slice(2)}` : '';
-  return `${pad2(p.d)}.${pad2(p.mo)}${year} ${pad2(p.h)}:${pad2(p.mi)}`;
 }

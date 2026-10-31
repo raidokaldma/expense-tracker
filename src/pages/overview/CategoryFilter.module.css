@@ -1,0 +1,72 @@
+.categoryFilter {
+  position: relative;
+}
+.filterBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+}
+.filterPanel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  width: 300px;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(20, 24, 32, 0.18);
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  font-weight: 600;
+}
+.filterList {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px 0 6px;
+}
+.filterGroup,
+.filterCategory {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.filterGroup {
+  font-weight: 600;
+  margin-top: 4px;
+}
+.filterCategory {
+  padding-left: 34px;
+}
+.filterGroup:hover,
+.filterCategory:hover {
+  background: var(--hover);
+}
+.filterCount {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.filterPanel input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  flex-shrink: 0;
+}

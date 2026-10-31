@@ -1,12 +1,11 @@
 import type { KeyboardEvent, RefObject } from 'react';
+import type { CategoryGroupId } from '../../../shared/types';
 import { cx } from '../../components/cx';
-import { Icon } from '../../components/icons';
-import { cellId, type SelectHow, selectHow } from '../../components/selection';
-import { formatAmount } from '../../model/money';
+import { cellId, type SelectHow } from '../../components/selection';
 import type { Pivot } from '../../model/pivot';
-import { plural } from '../../model/plural';
-import type { CategoryGroupId } from '../../model/types';
-import s from './overview.module.css';
+import { PivotCell } from './PivotCell';
+import { PivotRowLabel } from './PivotRowLabel';
+import s from './PivotTable.module.css';
 
 interface Props {
   pivot: Pivot;
@@ -45,7 +44,7 @@ export function PivotTable({
   const gridCols = `minmax(210px, 1.6fr) repeat(${months.length}, minmax(88px, 1fr)) minmax(104px, 1fr)`;
   return (
     <div
-      className={s.pgrid}
+      className={s.pivotGrid}
       style={{ minWidth: 210 + 88 * months.length + 104 }}
       role="treegrid"
       aria-label="Totals by category and month"
@@ -54,16 +53,16 @@ export function PivotTable({
       onKeyDown={onKeyDown}
       ref={tableRef}
     >
-      <div className={cx(s.prow, s.phdr)} style={{ gridTemplateColumns: gridCols }} role="row">
-        <div className={s.plabel} role="columnheader">
+      <div className={cx(s.pivotRow, s.pivotHeader)} style={{ gridTemplateColumns: gridCols }} role="row">
+        <div className={s.pivotLabel} role="columnheader">
           Category
         </div>
         {months.map((m) => (
-          <div key={m.key} className={s.pc} role="columnheader" title={m.long}>
+          <div key={m.key} className={s.pivotCell} role="columnheader" title={m.long}>
             {m.short}
           </div>
         ))}
-        <div className={cx(s.pc, s.tcol)} role="columnheader">
+        <div className={cx(s.pivotCell, s.totalColumn)} role="columnheader">
           Total
         </div>
       </div>
@@ -72,11 +71,11 @@ export function PivotTable({
           return (
             <div
               key={`section-${row.label}`}
-              className={cx(s.prow, s.psec)}
+              className={cx(s.pivotRow, s.pivotSection)}
               style={{ gridTemplateColumns: gridCols }}
               role="row"
             >
-              <div className={s.psectitle} role="rowheader">
+              <div className={s.pivotSectionTitle} role="rowheader">
                 {row.label}
               </div>
             </div>
@@ -85,83 +84,30 @@ export function PivotTable({
         return (
           <div
             key={row.key}
-            className={cx(s.prow, s[row.kind], row.hidden && s.hid, rowIndex === activeRow && s.cur)}
+            className={cx(s.pivotRow, s[row.kind], row.hidden && s.dimmed, rowIndex === activeRow && s.currentRow)}
             style={{ gridTemplateColumns: gridCols }}
             role="row"
             aria-level={row.kind === 'child' ? 2 : 1}
             aria-expanded={row.kind === 'parent' ? row.open : undefined}
           >
-            <div className={s.plabel} role="rowheader">
-              {row.kind === 'parent' && (
-                <button
-                  type="button"
-                  className={cx(s.caret, !row.open && s.closed)}
-                  tabIndex={-1}
-                  aria-label={`${row.open ? 'Collapse' : 'Expand'} ${row.label}`}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (row.groupId) onToggleGroup(row.groupId);
-                  }}
-                >
-                  <Icon name="caret" weight={2.2} />
-                </button>
-              )}
-              <span className={s.lname}>
-                <span className={s.ltext}>{row.label}</span>
-                {row.kind === 'parent' && (
-                  <span className={s.lcount} title={plural(row.categoryCount ?? 0, 'category', 'categories')}>
-                    {row.categoryCount ?? 0}
-                  </span>
-                )}
-              </span>
-              {(row.kind === 'parent' || row.kind === 'child') && (
-                // shown on hover, and always while hidden
-                <button
-                  type="button"
-                  className={cx(s.eye, row.hidden && s.on)}
-                  tabIndex={-1}
-                  aria-label={`${row.hidden ? 'Show' : 'Hide'} ${row.label}`}
-                  title={`${row.hidden ? 'Show' : 'Hide'} (X)`}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onClick={() => onToggleHidden(row.key)}
-                >
-                  <Icon name={row.hidden ? 'hidden' : 'eye'} size={13} />
-                </button>
-              )}
-            </div>
+            <PivotRowLabel row={row} onToggleGroup={onToggleGroup} onToggleHidden={() => onToggleHidden(row.key)} />
             {row.values.map((value, col) => {
               const active = rowIndex === activeRow && col === activeCol;
-              // a dash means no transactions; transactions that cancel out show 0,00
-              const empty = row.counts[col] === 0;
-              const id = cellId({ key: row.key, col: cols[col] });
-              const inSelection = selected.has(id);
+              const cell = cellId({ key: row.key, col: cols[col] });
+              const inSelection = selected.has(cell);
               return (
-                <div
+                <PivotCell
                   key={cols[col]}
                   id={`p-${rowIndex}-${col}`}
-                  className={cx(
-                    s.pc,
-                    'mono',
-                    cols[col] === 'total' && s.tcol,
-                    empty && s.zero,
-                    value > 0 && s.pos,
-                    active && s.active,
-                    inSelection && (selected.size > 1 || !active) && s.sel,
-                  )}
-                  role="gridcell"
-                  aria-selected={inSelection}
-                  data-cell={id}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    if (e.button === 0) onSelect(row.key, cols[col], selectHow(e));
-                  }}
-                >
-                  {empty ? '–' : formatAmount(value)}
-                </div>
+                  cell={cell}
+                  value={value}
+                  count={row.counts[col]}
+                  isTotal={cols[col] === 'total'}
+                  active={active}
+                  inSelection={inSelection}
+                  shaded={inSelection && (selected.size > 1 || !active)}
+                  onSelect={(how) => onSelect(row.key, cols[col], how)}
+                />
               );
             })}
           </div>

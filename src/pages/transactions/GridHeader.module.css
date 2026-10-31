@@ -1,0 +1,108 @@
+.headerRow {
+  background: var(--hover);
+  border-bottom-color: var(--line);
+}
+.filterRow {
+  background: #fafbfc;
+  border-bottom-color: var(--line);
+}
+.headerLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.filtered .headerLabel::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.filterCell {
+  padding: 3px 4px;
+}
+.sortButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+.sortButton:hover .headerLabel {
+  color: var(--ink);
+}
+.sortButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.sortBy {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+.filter {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  padding: 0 6px;
+  color: var(--ink);
+}
+/* room for the clear button */
+.filter.filled {
+  padding-right: 24px;
+}
+.clearFilter {
+  position: absolute;
+  /* the same 2px gap on the right as above and below (the box sits 4px inside the cell) */
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.clearFilter:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.filter::placeholder {
+  color: #6b7280;
+}
+.filter:hover {
+  border-color: var(--line);
+  background: #fff;
+}
+.filter:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(36, 87, 197, 0.15);
+}

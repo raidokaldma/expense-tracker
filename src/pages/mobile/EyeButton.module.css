@@ -1,0 +1,12 @@
+.eye {
+  width: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.eye.visible {
+  color: var(--ink);
+}

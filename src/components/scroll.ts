@@ -7,11 +7,11 @@ export function keepInView(container: HTMLElement | null, el: Element | null | u
   else if (r.bottom > box.bottom - margin) container.scrollTop += r.bottom - (box.bottom - margin);
 }
 
-/** Scrolls the page just enough to show `el` below the sticky navbar. */
+/** Scrolls the page just enough to show `el` below the sticky page header. */
 export function keepInWindow(el: Element | null | undefined, margin = 8) {
   if (!el) return;
   const r = el.getBoundingClientRect();
-  const top = (document.querySelector('.app-header')?.getBoundingClientRect().bottom ?? 0) + margin;
+  const top = (document.querySelector('header')?.getBoundingClientRect().bottom ?? 0) + margin;
   if (r.top < top) window.scrollBy(0, r.top - top);
   else if (r.bottom > window.innerHeight - margin) window.scrollBy(0, r.bottom - window.innerHeight + margin);
 }

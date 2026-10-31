@@ -15,7 +15,7 @@ export function openDatabase(path: string): Db {
 }
 
 /** Runs `fn` in one transaction: everything it writes lands, or nothing does. */
-export function transaction<T>(db: Db, fn: () => T): T {
+export function inTransaction<T>(db: Db, fn: () => T): T {
   db.exec('BEGIN IMMEDIATE');
   try {
     const result = fn();
@@ -35,11 +35,14 @@ export function backup(db: Db, file: string): string {
   return file;
 }
 
-export const backupStamp = (date = new Date()) => date.toISOString().slice(0, 19).replace(/:/g, '');
+export function backupStamp(date = new Date()) {
+  return date.toISOString().slice(0, 19).replace(/:/g, '');
+}
 
 /** The schema version; 0 for a database that was just created. */
-export const schemaVersion = (db: Db) =>
-  (db.prepare('PRAGMA user_version').get() as { user_version: number }).user_version;
+export function schemaVersion(db: Db) {
+  return (db.prepare('PRAGMA user_version').get() as { user_version: number }).user_version;
+}
 
 /**
  * Brings the schema up to date from numbered files (001_init.sql, 002_….sql), each applied once and in order.
@@ -69,7 +72,7 @@ export function migrate(db: Db, options: { dir?: string; backupDir?: string } = 
     // off for the migration so a table can be rebuilt; the check below catches anything left dangling
     db.exec('PRAGMA foreign_keys = OFF');
     try {
-      transaction(db, () => {
+      inTransaction(db, () => {
         db.exec(sql);
         const broken = db.prepare('PRAGMA foreign_key_check').all();
         if (broken.length) throw new Error(`${files[n - 1]} leaves ${broken.length} broken references`);

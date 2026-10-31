@@ -1,5 +1,4 @@
-import { sortedTree } from './lookup';
-import { MONTH_NAMES, monthKey, nowLocal, pad2 } from './time';
+import { MONTH_NAMES, monthKey, nowLocal, pad2 } from '../../shared/time';
 import type {
   Category,
   CategoryGroup,
@@ -8,17 +7,18 @@ import type {
   CategoryKind,
   OverviewPeriod,
   Transaction,
-} from './types';
+} from '../../shared/types';
+import { sortedTree } from './lookup';
 import { isValid } from './validity';
 
-export interface PivotMonth {
+interface PivotMonth {
   key: string;
   short: string;
   mid: string;
   long: string;
 }
 
-export type PivotRowKind = 'section' | 'parent' | 'child' | 'total' | 'net';
+type PivotRowKind = 'section' | 'parent' | 'child' | 'total' | 'net';
 
 export interface PivotRow {
   kind: PivotRowKind;
@@ -37,6 +37,18 @@ export interface PivotRow {
   categoryCount?: number;
 }
 
+export function groupRowKey(id: CategoryGroupId) {
+  return `g:${id}`;
+}
+
+export function categoryRowKey(id: CategoryId) {
+  return `c:${id}`;
+}
+
+export function categoryOfRowKey(key: string) {
+  return key.startsWith('c:') ? (key.slice(2) as CategoryId) : null;
+}
+
 export interface Pivot {
   months: PivotMonth[];
   rows: PivotRow[];
@@ -44,7 +56,7 @@ export interface Pivot {
   transactions: Transaction[];
 }
 
-export function monthInfo(key: string): PivotMonth {
+function monthInfo(key: string): PivotMonth {
   const name = MONTH_NAMES[Number(key.slice(5, 7)) - 1];
   const now = nowLocal();
   const current = key === `${now.y}-${pad2(now.mo)}`;
@@ -56,7 +68,7 @@ export function monthInfo(key: string): PivotMonth {
   };
 }
 
-export interface PivotInput {
+interface PivotInput {
   transactions: Transaction[];
   groups: CategoryGroup[];
   categories: Category[];
@@ -66,10 +78,10 @@ export interface PivotInput {
   collapsed: ReadonlySet<CategoryGroupId>;
 }
 
-const shiftMonth = (key: string, n: number) => {
+function shiftMonth(key: string, n: number) {
   const d = new Date(Date.UTC(Number(key.slice(0, 4)), Number(key.slice(5, 7)) - 1 + n, 1));
   return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}`;
-};
+}
 
 /**
  * Calendar months of a period, oldest first. "Last 3 / 12 months" count back from the current month, empty months
@@ -142,7 +154,7 @@ export function buildPivot(input: PivotInput): Pivot {
       const ids = kids.map((c) => c.id);
       rows.push({
         kind: 'parent',
-        key: `g:${group.id}`,
+        key: groupRowKey(group.id),
         label: group.name,
         categoryIds: ids,
         ...cells(ids),
@@ -155,7 +167,7 @@ export function buildPivot(input: PivotInput): Pivot {
         for (const c of kids)
           rows.push({
             kind: 'child',
-            key: `c:${c.id}`,
+            key: categoryRowKey(c.id),
             label: c.name,
             categoryIds: [c.id],
             ...cells([c.id]),

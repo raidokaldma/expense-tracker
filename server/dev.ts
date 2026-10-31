@@ -6,10 +6,10 @@ const children = [
   spawn('node', ['--watch', '--env-file-if-exists=.env', 'server/main.ts'], { stdio: 'inherit', env }),
   spawn('npx', ['vite'], { stdio: 'inherit' }),
 ];
-const stop = () => {
+function stop() {
   for (const child of children) child.kill();
   process.exit();
-};
+}
 process.on('SIGINT', stop);
 process.on('SIGTERM', stop);
 for (const child of children) child.on('exit', stop);

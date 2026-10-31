@@ -1,9 +1,9 @@
+import type { CategoryId, Transaction } from '../../shared/types';
 import { nearbySuffixCategory } from './nearbySuffix';
-import type { CategoryId, Transaction } from './types';
 
-export type ConfidenceLevel = 'high' | 'med' | 'low';
+type ConfidenceLevel = 'high' | 'med' | 'low';
 
-export interface CategorySuggestion {
+interface CategorySuggestion {
   categoryId: CategoryId;
   confidence: number;
   level: ConfidenceLevel;
@@ -34,8 +34,13 @@ const MIN_CONFIDENCE = 0.2;
 const NEARBY_SUFFIX_CONFIDENCE = 0.5;
 
 /** Recipients compare without case and extra spaces. */
-const normalize = (name: string | null) => (name ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
-const words = (name: string) => name.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+function normalize(name: string | null) {
+  return (name ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function words(name: string) {
+  return name.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+}
 
 /** The recipient's first word, when it says something: at least 3 characters and not just digits. */
 function firstWord(name: string) {
@@ -101,10 +106,12 @@ export function suggestCategories(row: Transaction | null, rows: Transaction[]):
   );
 }
 
-const confidenceOf = (categoryId: CategoryId, score: number, total: number, max: number) => ({
-  categoryId,
-  confidence: Math.min(max, score / (total + DOUBT)),
-});
+function confidenceOf(categoryId: CategoryId, score: number, total: number, max: number) {
+  return {
+    categoryId,
+    confidence: Math.min(max, score / (total + DOUBT)),
+  };
+}
 
 function leveled(list: { categoryId: CategoryId; confidence: number }[]): CategorySuggestion[] {
   return list

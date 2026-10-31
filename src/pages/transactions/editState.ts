@@ -1,5 +1,5 @@
-import { formatLocal, parseLocalInput } from '../../model/time';
-import type { Transaction } from '../../model/types';
+import { formatLocal, parseLocalInput } from '../../../shared/time';
+import type { Transaction } from '../../../shared/types';
 import { baseParts, type Col } from './columns';
 
 export interface Option {
@@ -13,11 +13,21 @@ export interface Option {
   isNew?: boolean;
 }
 
+export const NOTHING_HIGHLIGHTED = -1;
+
+/** The suggestion ↑ (-1) or ↓ (1) highlights next; past either end it goes through nothing highlighted. */
+export function stepHighlight(highlighted: number, step: -1 | 1, count: number): number {
+  const next = highlighted + step;
+  if (next < NOTHING_HIGHLIGHTED) return count - 1;
+  if (next >= count) return NOTHING_HIGHLIGHTED;
+  return next;
+}
+
 export interface EditState {
   text: string;
   /** The text was typed (so it filters the suggestions), not just copied from the cell. */
   touched: boolean;
-  /** Highlighted suggestion, -1 for none. */
+  /** Index of the highlighted suggestion, or NOTHING_HIGHLIGHTED. */
   highlighted: number;
   error: string;
   /** Date editor: the text field has the keys (cursor visible) instead of the calendar. */
@@ -50,9 +60,9 @@ export function initialEdit({ column, row, cellText, typed, options, opensUp }: 
     const parts = parseLocalInput(typed, baseParts(row));
     if (parts) text = formatLocal(parts);
   }
-  let highlighted = -1;
+  let highlighted = NOTHING_HIGHLIGHTED;
   if (column.kind === 'suggest') {
-    if (typed != null) highlighted = text.trim() ? 0 : -1;
+    if (typed != null) highlighted = text.trim() ? 0 : NOTHING_HIGHLIGHTED;
     else {
       highlighted = options.findIndex((o) => o.value === text);
       if (!text && options[0]?.confidence != null) highlighted = 0;

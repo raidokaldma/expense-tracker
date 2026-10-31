@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import type { TransactionId } from '../../model/types';
-import { showToast, useStore } from '../../store/store';
+import type { TransactionId } from '../../../shared/types';
+import { useStore } from '../../store/store';
+import { showToast } from '../../store/toast';
 
 /** How long a row jumped to stays highlighted. */
 const FLASH_MS = 2600;

@@ -12,7 +12,9 @@ interface CellPos {
   col: number;
 }
 
-export const isEditMove = (move: Move) => move === 'right-edit' || move === 'left-edit';
+export function isEditMove(move: Move) {
+  return move === 'right-edit' || move === 'left-edit';
+}
 
 /** The cell a move leads to: down, up, or along the row with Tab / Shift+Tab, wrapping to the next row. */
 export function positionAfter({ row, col }: CellPos, move: Move, rowCount: number): CellPos {

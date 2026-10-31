@@ -1,0 +1,46 @@
+.accountCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+.accountCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+.accountCard:hover {
+  border-color: #a9b1be;
+}
+.accountCard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.accountCard.current {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: var(--accent-tint);
+}
+.accountName {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.accountTotal {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}

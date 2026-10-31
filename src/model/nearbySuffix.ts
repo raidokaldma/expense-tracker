@@ -1,4 +1,4 @@
-import type { CategoryId, Transaction } from './types';
+import type { CategoryId, Transaction } from '../../shared/types';
 
 /** How far apart (either way) rows count as nearby: a trip, a week of visiting. */
 const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;

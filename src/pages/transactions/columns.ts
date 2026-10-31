@@ -1,5 +1,4 @@
-import type { Lookup } from '../../model/lookup';
-import { amountEditText, formatAmount, parseAmount } from '../../model/money';
+import { sameName } from '../../../shared/names';
 import {
   formatLocal,
   formatTimestamp,
@@ -9,8 +8,10 @@ import {
   nowTimestamp,
   parseLocalInput,
   toLocal,
-} from '../../model/time';
-import type { AccountId, CategoryId, NewTransaction, Transaction, TransactionId } from '../../model/types';
+} from '../../../shared/time';
+import type { AccountId, CategoryId, NewTransaction, Transaction, TransactionId } from '../../../shared/types';
+import type { Lookup } from '../../model/lookup';
+import { amountEditText, formatAmount, parseAmount } from '../../model/money';
 
 export type ColKey = 'accountId' | 'occurredAt' | 'counterparty' | 'amount' | 'categoryId' | 'description';
 
@@ -85,10 +86,10 @@ export function displayText(t: Transaction, key: ColKey, lookup: Lookup): string
 }
 
 /** The value as it appears in the editor (and on the clipboard). */
-export function editText(t: Transaction, key: ColKey, lookup: Lookup, isDraft: boolean): string {
+export function editText(t: Transaction, key: ColKey, lookup: Lookup, { draft = false } = {}): string {
   switch (key) {
     case 'occurredAt':
-      return t.occurredAt ? formatLocal(toLocal(t.occurredAt)) : isDraft ? formatLocal(nowLocal()) : '';
+      return t.occurredAt ? formatLocal(toLocal(t.occurredAt)) : draft ? formatLocal(nowLocal()) : '';
     case 'amount':
       return amountEditText(t.amount);
     default:
@@ -96,7 +97,9 @@ export function editText(t: Transaction, key: ColKey, lookup: Lookup, isDraft: b
   }
 }
 
-export const baseParts = (t: Transaction): LocalParts => (t.occurredAt ? toLocal(t.occurredAt) : nowLocal());
+export function baseParts(t: Transaction): LocalParts {
+  return t.occurredAt ? toLocal(t.occurredAt) : nowLocal();
+}
 
 type Parsed = { ok: true; value: NewTransaction[ColKey] } | { ok: false; error: string };
 
@@ -105,8 +108,9 @@ export function parseCell(key: ColKey, raw: string, row: Transaction, lookup: Lo
   const text = raw.trim();
   switch (key) {
     case 'amount': {
-      const v = parseAmount(text);
-      return v === undefined ? { ok: false, error: 'Not a number — try -12,50 or 2850' } : { ok: true, value: v };
+      const parsed = parseAmount(text);
+      if (parsed.kind === 'invalid') return { ok: false, error: 'Not a number — try -12,50 or 2850' };
+      return { ok: true, value: parsed.kind === 'amount' ? parsed.value : null };
     }
     case 'occurredAt': {
       if (!text) return { ok: true, value: null };
@@ -117,14 +121,14 @@ export function parseCell(key: ColKey, raw: string, row: Transaction, lookup: Lo
     }
     case 'accountId': {
       if (!text) return { ok: true, value: null };
-      const a = [...lookup.accounts.values()].find((x) => x.name.toLowerCase() === text.toLowerCase());
+      const a = [...lookup.accounts.values()].find((x) => sameName(x.name, text));
       return a ? { ok: true, value: a.id as AccountId } : { ok: false, error: 'Unknown account — add it in Settings' };
     }
     case 'categoryId': {
       if (!text) return { ok: true, value: null };
-      const c = [...lookup.categories.values()].find((x) => x.name.toLowerCase() === text.toLowerCase());
+      const c = [...lookup.categories.values()].find((x) => sameName(x.name, text));
       if (c) return { ok: true, value: c.id as CategoryId };
-      const isGroup = [...lookup.groups.values()].some((g) => g.name.toLowerCase() === text.toLowerCase());
+      const isGroup = [...lookup.groups.values()].some((g) => sameName(g.name, text));
       return {
         ok: false,
         error: isGroup ? 'That is a group — pick one of its categories' : 'Unknown category — add it in Settings',
@@ -133,4 +137,11 @@ export function parseCell(key: ColKey, raw: string, row: Transaction, lookup: Lo
     default:
       return { ok: true, value: text || null };
   }
+}
+
+/** The text a paste puts into a cell: a block copied from a spreadsheet pastes its first cell, and an amount copied
+ * from a bank page loses its currency sign. */
+export function pastedText(clipboardText: string, key: ColKey): string {
+  const text = clipboardText.split(/\r?\n/)[0].split('\t')[0].trim();
+  return key === 'amount' && parseAmount(text).kind === 'invalid' ? text.replace(/\p{Sc}/gu, '') : text;
 }

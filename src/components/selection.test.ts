@@ -3,8 +3,13 @@ import { type Cell, nextSelection, rowKeys, type Selection, selectedIds } from '
 
 const keys = ['a', 'b', 'c'];
 const cols = ['m1', 'm2', 'total'];
-const at = (key: string, col: string): Cell => ({ key, col });
-const ids = (selection: Selection, active: Cell) => [...selectedIds(selection, active, keys, cols)].sort();
+function at(key: string, col: string): Cell {
+  return { key, col };
+}
+
+function ids(selection: Selection, active: Cell) {
+  return [...selectedIds(selection, active, keys, cols)].sort();
+}
 
 describe('cell selection', () => {
   it('is the active cell alone to start with and after a plain move', () => {
