@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      # the database and its backups, on the host
+      - ./data:/data
+    restart: unless-stopped

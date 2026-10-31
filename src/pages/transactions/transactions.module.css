@@ -1,0 +1,615 @@
+.root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* "needs attention": red outline; while its filter is on, the same thick border + tint as a selected account */
+:global(.btn).warn {
+  background: #fff;
+  border-color: var(--neg-line);
+  color: var(--neg-ink);
+}
+:global(.btn).warn:hover {
+  background: var(--neg-tint);
+}
+:global(.btn).warn.on {
+  background: var(--neg-tint);
+  border-color: #b3261e;
+  box-shadow: inset 0 0 0 1px #b3261e;
+}
+:global(.btn).warn.on:hover {
+  background: #fdecea;
+}
+:global(.btn).done,
+:global(.btn).done:hover {
+  background: #eaf6ee;
+  border-color: #a8d5b7;
+  color: #14532d;
+}
+:global(.btn).done.on,
+:global(.btn).done.on:hover {
+  border-color: #1e7a43;
+  box-shadow: inset 0 0 0 1px #1e7a43;
+}
+:global(.btn).done.on:hover {
+  background: #ddf0e3;
+}
+
+.hidnote {
+  margin: 4px 0 0;
+  color: var(--neg-ink);
+}
+.hidnote button {
+  all: unset;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.hidnote button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink-3);
+}
+
+/* ---------- account cards ---------- */
+.accts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+.acct {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+.acct:hover {
+  border-color: #a9b1be;
+}
+.acct:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.acct.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: var(--accent-tint);
+}
+.aname {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.atotal {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- active row bar ---------- */
+.rowbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px 6px 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.rbinfo {
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.grow {
+  flex: 1 1 auto;
+}
+
+/* ---------- grid ---------- */
+.wrap {
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 240px;
+  overscroll-behavior: contain;
+  /* rows are drawn only while in view; the browser must not "anchor" the scroll position to them */
+  overflow-anchor: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.grid {
+  min-width: 1080px;
+  outline: none;
+}
+.row {
+  display: grid;
+  grid-template-columns: 56px 150px 158px minmax(180px, 1.2fr) 120px 190px minmax(200px, 2fr);
+  border-bottom: 1px solid var(--line-soft);
+  background: #fff;
+}
+.vrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--rowh) + 1px);
+}
+.vrow.cur {
+  z-index: 4;
+}
+.hdr {
+  background: var(--hover);
+  border-bottom-color: var(--line);
+}
+.ghead {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.frow {
+  background: #fafbfc;
+  border-bottom-color: var(--line);
+}
+.cur {
+  background: var(--accent-tint);
+}
+@keyframes flashrow {
+  0% {
+    background: #ffe58f;
+  }
+  100% {
+    background: transparent;
+  }
+}
+.flash .cell {
+  animation: flashrow 2.4s ease-out;
+}
+.cell {
+  position: relative;
+  height: var(--rowh);
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid var(--line-soft);
+  min-width: 0;
+  cursor: default;
+  user-select: none;
+}
+.cell:last-child {
+  border-right: 0;
+}
+.num {
+  justify-content: flex-end;
+}
+.txt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.ph {
+  color: #6b7280;
+  font-style: italic;
+}
+/* the filter button on recipient and category cells, shown while the cell is hovered */
+.quickfilter {
+  margin-left: auto;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  /* the same 3px gap on the right as above and below (cell padding 10px) */
+  margin-right: -7px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+}
+.cell:hover .quickfilter {
+  opacity: 1;
+}
+.quickfilter:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.idx {
+  color: var(--muted);
+  justify-content: flex-end;
+  font-size: 11.5px;
+  padding: 0 8px;
+}
+.hlabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.filtered .hlabel::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.fcell {
+  padding: 3px 4px;
+}
+.sortbtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+.sortbtn:hover .hlabel {
+  color: var(--ink);
+}
+.sortbtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.sortby {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+.filter {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  padding: 0 6px;
+  color: var(--ink);
+}
+/* room for the clear button */
+.filter.filled {
+  padding-right: 24px;
+}
+.clearfilter {
+  position: absolute;
+  /* the same 2px gap on the right as above and below (the box sits 4px inside the cell) */
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.clearfilter:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.filter::placeholder {
+  color: #6b7280;
+}
+.filter:hover {
+  border-color: var(--line);
+  background: #fff;
+}
+.filter:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(36, 87, 197, 0.15);
+}
+.missing {
+  background: #fdecea;
+  box-shadow: inset 0 0 0 1px #efb3ab;
+}
+.draft .cell {
+  color: var(--muted);
+}
+/* a row in a selection of several */
+.sel .cell {
+  background: #dfe8fb;
+}
+.active {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  z-index: 2;
+}
+.grid:not(:focus-within) .active {
+  outline-color: #a9b1be;
+}
+.editing {
+  padding: 0;
+  z-index: 5;
+}
+
+/* ---------- editors ---------- */
+.ed {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  margin: 0;
+  padding: 0 9px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  /* the cell's own outline (.active) frames the editor, so the edges match the active cell */
+  outline: none;
+  box-shadow: 0 4px 14px rgba(20, 24, 32, 0.16);
+}
+.ed.num {
+  text-align: right;
+}
+.ed.err {
+  outline-color: #c8322b;
+  background: var(--neg-tint);
+}
+/* date editor: while the calendar has the keys, the text field shows no cursor */
+.calmode {
+  caret-color: transparent;
+}
+.calmode::selection {
+  background: transparent;
+}
+.errtip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  background: var(--neg-ink);
+  color: #fff;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 30;
+}
+.pop {
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  min-width: calc(100% + 2px);
+  width: max-content;
+  max-width: 340px;
+  max-height: 290px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  box-shadow: 0 10px 28px rgba(20, 24, 32, 0.18);
+  padding: 4px;
+  margin-top: 3px;
+  z-index: 20;
+}
+.pop.up {
+  top: auto;
+  bottom: 100%;
+  margin: 0 0 3px;
+}
+.opt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.opt:hover {
+  background: var(--hover);
+}
+.opt.hi,
+.opt.hi:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.opt.hi .hint {
+  color: #e3eafb;
+}
+.opt.new {
+  font-style: italic;
+}
+.opthead {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 8px 4px;
+}
+.olabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.opt.sug {
+  background: var(--accent-soft);
+  margin-bottom: 2px;
+}
+.opt.sug .olabel {
+  font-weight: 600;
+}
+.opt.sug.hi {
+  background: var(--accent);
+}
+.conf {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+.high {
+  background: #d7eedf;
+  color: #14532d;
+}
+.med {
+  background: #fbe7cc;
+  color: #713f0a;
+}
+.low {
+  background: #e8ebf0;
+  color: var(--ink-3);
+}
+.opt.hi .conf {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.pophelp {
+  position: sticky;
+  bottom: -4px;
+  background: #fff;
+  border-top: 1px solid var(--line-soft);
+  margin: 4px -4px -4px;
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: normal;
+}
+.cal {
+  width: 262px;
+  max-width: none;
+  max-height: none;
+  padding: 8px;
+}
+.calhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 4px 8px;
+  font-weight: 600;
+}
+.calhead .mono {
+  color: var(--muted);
+  font-size: 12px;
+}
+.calgrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+.wk span {
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: center;
+  padding-bottom: 4px;
+  font-weight: 600;
+}
+.day {
+  height: 30px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.day:hover {
+  background: var(--hover);
+}
+.day.today {
+  box-shadow: inset 0 0 0 1px #a9b1be;
+}
+.day.sel,
+.day.sel:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* the clipboard goes through this hidden text box, so copy and paste need no permissions */
+.clipproxy {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

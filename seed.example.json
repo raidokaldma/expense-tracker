@@ -1,0 +1,40 @@
+{
+  "groups": [
+    { "name": "Earnings", "kind": "income", "categories": ["Salary", "Other income"] },
+    { "name": "Housing", "kind": "expense", "categories": ["Rent", "Utilities", "Phone & internet"] },
+    { "name": "Food", "kind": "expense", "categories": ["Groceries", "Eating out"] },
+    { "name": "Mobility", "kind": "expense", "categories": ["Transport", "Fuel"] },
+    { "name": "Lifestyle", "kind": "expense", "categories": ["Shopping", "Entertainment", "Subscriptions", "Gifts"] },
+    { "name": "Health & care", "kind": "expense", "categories": ["Health"] },
+    { "name": "Travel & holidays", "kind": "expense", "categories": ["Travel"] },
+    { "name": "Transfers", "kind": "transfer", "categories": ["Transfer"] }
+  ],
+  "transactions": [
+    {
+      "externalId": "lhv-2026-0001",
+      "account": "Northmere Bank",
+      "occurredAt": "2026-09-28T09:12:00+03:00",
+      "counterparty": "Employer OÜ",
+      "amount": 285000,
+      "category": "Salary",
+      "description": "September salary"
+    },
+    {
+      "externalId": "lhv-2026-0002",
+      "account": "Northmere Bank",
+      "occurredAt": "2026-10-01T08:00:00+03:00",
+      "counterparty": "Landlord",
+      "amount": -65000,
+      "category": "Rent"
+    },
+    {
+      "account": "Cash",
+      "occurredAt": "2026-10-03T20:15:00+03:00",
+      "counterparty": "Café Lumen",
+      "amount": -1850,
+      "category": "Eating out",
+      "description": "Coffee & cake"
+    },
+    { "account": "Cash", "occurredAt": "2026-10-04T12:00:00+03:00", "counterparty": "Market", "amount": -940 }
+  ]
+}

@@ -1,0 +1,339 @@
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.top h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.main {
+  flex: 999 1 620px;
+  min-width: 0;
+}
+.side {
+  flex: 1 1 300px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.side .card {
+  padding: 16px;
+}
+.side h2 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tree,
+.alist {
+  outline: none;
+  padding: 4px 0 8px;
+}
+.alist {
+  margin: 0 -16px -16px;
+  padding: 0;
+  min-height: 8px;
+}
+.alist .emptyrow {
+  margin: 0;
+  padding-left: 16px;
+}
+.sechead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 16px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.seccount {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11.5px;
+}
+.grow,
+.crow,
+.arow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 10px 0 16px;
+  border-top: 1px solid var(--line-soft);
+  cursor: default;
+  user-select: none;
+}
+.grow {
+  background: #f3f5f8;
+  font-weight: 700;
+  border-top-color: var(--line);
+}
+.crow {
+  padding-left: 40px;
+}
+.sel {
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--accent-tint);
+}
+.tree:not(:focus-within) .sel,
+.alist:not(:focus-within) .sel {
+  box-shadow: inset 0 0 0 2px #a9b1be;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #e3ebfb;
+  color: #1e3f86;
+  white-space: nowrap;
+}
+.kindsel {
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 0 4px;
+}
+.kindsel:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.acts {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+}
+.grow:hover .acts,
+.crow:hover .acts,
+.arow:hover .acts,
+.sel .acts {
+  opacity: 1;
+}
+.ib {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.ib:hover {
+  background: #e3e6eb;
+  color: var(--ink);
+}
+.ib.danger:hover {
+  background: #fdecea;
+  color: var(--neg-ink);
+}
+.ib:disabled,
+.ib:disabled:hover {
+  background: transparent;
+  color: var(--ink-3);
+  opacity: 0.4;
+  cursor: default;
+}
+.ined {
+  /* edited in place: the text stays where the name was, the caret shows it is being edited */
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+}
+.ined::placeholder {
+  color: var(--muted);
+  font-weight: 400;
+}
+.ined.bad {
+  color: var(--neg-ink);
+}
+.err {
+  padding: 4px 16px 6px 40px;
+  font-size: 12px;
+  color: var(--neg-ink);
+  background: var(--neg-tint);
+}
+.addrow {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px 0 40px;
+  border-top: 1px solid var(--line-soft);
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--accent-tint);
+}
+.addrow.forgroup {
+  padding-left: 16px;
+}
+.emptyrow {
+  padding: 8px 16px 8px 40px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-style: italic;
+}
+.picker {
+  margin: 4px 10px 8px 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(20, 24, 32, 0.14);
+  padding: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  outline: none;
+  position: relative;
+}
+.picker:focus {
+  border-color: var(--accent);
+}
+.ptitle {
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.opt {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.opt:hover {
+  background: var(--hover);
+}
+.opt.hi,
+.opt.hi:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.opt.hi .hint {
+  color: #e3eafb;
+}
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  display: inline-grid;
+  place-items: center;
+}
+.badge.zero {
+  background: #e8ebf0;
+  color: var(--ink-3);
+}
+.changes {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.changes li {
+  font-size: 12.5px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: #f7f8fa;
+}
+.muted {
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cardhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cardhead h2 {
+  margin: 0;
+}
+/* while a name is being added, the add row is the active row */
+.tree:has(.addrow) .sel,
+.alist:has(.addrow) .sel {
+  box-shadow: none;
+  background: transparent;
+}
+/* row actions stay out of the way while a name is edited */
+.tree:has(.ined) .acts,
+.alist:has(.ined) .acts {
+  opacity: 0;
+}
+/* so does the row's New / Edited tag */
+.grow:has(.ined) .tag,
+.crow:has(.ined) .tag {
+  display: none;
+}

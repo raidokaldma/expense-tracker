@@ -1,0 +1,261 @@
+/* read-only views for phone-sized windows; the page itself scrolls */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 8px 16px;
+  background: var(--ink);
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  color: #c9ced8;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+}
+.tab.on {
+  color: #fff;
+  background: #2f3440;
+}
+
+.main {
+  padding: 12px 16px 32px;
+  font-size: 15px;
+}
+.main .mono {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* ---------- transactions ---------- */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+}
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  /* below 16px, iOS zooms the page in on focus */
+  font: inherit;
+  font-size: 16px;
+}
+.list,
+.cat {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.list li,
+.cat li {
+  padding: 10px 12px;
+}
+.list li + li,
+.cat li + li {
+  border-top: 1px solid var(--line-soft);
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.desc {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+.none {
+  margin: 16px 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- overview ---------- */
+.monthbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.monthbar h2 {
+  margin: 0;
+  font-size: inherit;
+}
+.monthbar button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+}
+.monthbar button:disabled {
+  opacity: 0.35;
+}
+.monthbar button:first-child svg {
+  transform: rotate(90deg);
+}
+.monthbar button:last-child svg {
+  transform: rotate(-90deg);
+}
+
+.hiddenbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+.hiddenbar button {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+.hiddenbar button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.hid .row > span {
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.table {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.sec {
+  padding: 14px 12px 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.row {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  border: 0;
+  border-top: 1px solid var(--line-soft);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+/* a tappable row with an eye button beside it while editing */
+.split {
+  display: flex;
+  border-top: 1px solid var(--line-soft);
+}
+.split > .row {
+  flex: 1;
+  min-width: 0;
+  border-top: 0;
+}
+.eye {
+  width: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.eye.on {
+  color: var(--ink);
+}
+/* totals line up with the amounts beside the eyes */
+.editing .total,
+.editing .net {
+  padding-right: 56px;
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.parent {
+  background: var(--hover);
+  font-weight: 600;
+}
+.child > .row {
+  padding-left: 40px;
+}
+.child.on {
+  background: var(--accent-soft);
+}
+.total {
+  font-weight: 600;
+}
+.net {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+}
+.net :global(.pos) {
+  color: #7fd6a0;
+}
+.caret {
+  display: grid;
+  transition: transform 0.15s;
+}
+.caret.closed {
+  transform: rotate(-90deg);
+}
+.cat {
+  padding-left: 28px;
+  background: var(--accent-tint);
+  border-top: 1px solid var(--line-soft);
+  font-size: 14px;
+}
