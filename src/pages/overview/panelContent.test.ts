@@ -1,8 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { Category, Timestamp } from '../../../shared/types';
 import { buildPivot } from '../../model/pivot';
 import { categories, groups, tx } from '../../model/testData';
 import { panelContent } from './panelContent';
+
+// October 2026 is the current month, shown "(to date)"
+vi.useFakeTimers({ toFake: ['Date'] });
+vi.setSystemTime(new Date('2026-10-20T10:00:00Z'));
+afterAll(() => {
+  vi.useRealTimers();
+});
 
 const pivot = buildPivot({
   transactions: [
