@@ -1,0 +1,19 @@
+.picker {
+  display: block;
+  width: calc(100% - 24px);
+  height: 40px;
+  margin: 0 12px;
+  padding: 0 36px 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  /* our own arrow: Safari on iPhone draws its native one against the right edge, ignoring padding */
+  appearance: none;
+  background:
+    var(--panel)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6270' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 12px center / 18px;
+  color: var(--ink);
+  /* below 16px, iOS zooms the page in on focus */
+  font: inherit;
+  font-size: 16px;
+}

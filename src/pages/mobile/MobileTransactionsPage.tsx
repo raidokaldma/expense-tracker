@@ -9,13 +9,14 @@ import { MobileHeader } from './MobileHeader';
 import s from './MobileTransactionsPage.module.css';
 import mobile from './mobile.module.css';
 import { setMobileView, useMobileView } from './mobileView';
+import { TransactionItem } from './TransactionItem';
 
-/** Read-only search over all transactions, with the same matching as Find (⌘K). */
+/** Search over all transactions, with the same matching as Find (⌘K), the newest first. */
 export function MobileTransactionsPage() {
   const transactions = useStore((st) => st.transactions);
   const lookup = useStore((st) => st.lookup);
   const q = useMobileView((v) => v.query);
-  const results = useMemo(() => searchTransactions(transactions, q, lookup), [transactions, q, lookup]);
+  const results = useMemo(() => searchTransactions(transactions, q, lookup, 'newest'), [transactions, q, lookup]);
 
   return (
     <>
@@ -35,24 +36,20 @@ export function MobileTransactionsPage() {
         </label>
         <ul className={mobile.list}>
           {results.map((t) => (
-            <li key={t.id}>
-              <div className={mobile.line}>
+            <TransactionItem key={t.id} transaction={t}>
+              <span className={mobile.line}>
                 <span className={mobile.name}>{t.counterparty || '(no recipient)'}</span>
                 <span className={cx('mono', t.amount != null && t.amount > 0 && 'pos')}>
                   {t.amount == null ? '—' : formatAmount(t.amount)}
                 </span>
-              </div>
-              {t.description && <div className={mobile.desc}>{t.description}</div>}
-              <div className={mobile.meta}>
-                {[
-                  t.occurredAt && formatTimestamp(t.occurredAt),
-                  lookup.categoryName(t.categoryId) || 'No category',
-                  lookup.accountName(t.accountId),
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </div>
-            </li>
+              </span>
+              {t.description && <span className={mobile.desc}>{t.description}</span>}
+              <span className={mobile.meta}>
+                {t.occurredAt && `${formatTimestamp(t.occurredAt)} · `}
+                {t.categoryId ? lookup.categoryName(t.categoryId) : <span className={mobile.missing}>No category</span>}
+                {t.accountId && ` · ${lookup.accountName(t.accountId)}`}
+              </span>
+            </TransactionItem>
           ))}
         </ul>
         {results.length === 0 && <p className={mobile.none}>No matching transactions.</p>}

@@ -35,4 +35,14 @@ describe('searchTransactions', () => {
   it('matches dates in Tallinn format', () => {
     expect(searchTransactions(rows, '15.10', lookup).map((r) => r.counterparty)).toEqual(['Supper Courier']);
   });
+
+  it('ranks recipient matches first, or goes by transaction date when asked for the newest', () => {
+    const market = [
+      tx({ counterparty: 'Market', occurredAt: '2026-10-01T09:00:00Z' as Timestamp }),
+      tx({ counterparty: 'Corner', description: 'market', occurredAt: '2026-10-20T09:00:00Z' as Timestamp }),
+    ];
+    const names = (order?: 'newest') => searchTransactions(market, 'market', lookup, order).map((r) => r.counterparty);
+    expect(names()).toEqual(['Market', 'Corner']);
+    expect(names('newest')).toEqual(['Corner', 'Market']);
+  });
 });

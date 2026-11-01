@@ -1,0 +1,14 @@
+.summary {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.open {
+  /* padding, not the select's margin: a margin would slip out past the list's background */
+  padding-bottom: 10px;
+}

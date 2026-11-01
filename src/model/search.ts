@@ -5,17 +5,31 @@ import { amountMatches } from './money';
 
 export const SEARCH_LIMIT = 50;
 
+/** Best match ranks recipient matches first, then the most recently added; newest goes by transaction date. */
+export type SearchOrder = 'best match' | 'newest';
+
 function recentFirst(a: Transaction, b: Transaction) {
   return (b.addedAt || b.occurredAt || '').localeCompare(a.addedAt || a.occurredAt || '');
 }
 
+/** By transaction date, the latest first; rows without a date go last. */
+export function newestFirst(a: Transaction, b: Transaction) {
+  return (b.occurredAt ?? '').localeCompare(a.occurredAt ?? '');
+}
+
 /**
  * Find (⌘K): every word must match some value, the bank's transaction id included. Numbers also match amounts
- * (12.5, 12,50, -12.50) and dates (15.10, 2026-10-15); >100 and <-50 compare amounts. Recipient matches rank first, then the newest.
+ * (12.5, 12,50, -12.50) and dates (15.10, 2026-10-15); >100 and <-50 compare amounts.
  */
-export function searchTransactions(rows: Transaction[], query: string, lookup: Lookup): Transaction[] {
+export function searchTransactions(
+  rows: Transaction[],
+  query: string,
+  lookup: Lookup,
+  order: SearchOrder = 'best match',
+): Transaction[] {
+  const byDate = order === 'newest' ? newestFirst : recentFirst;
   const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  if (!words.length) return rows.slice().sort(recentFirst).slice(0, SEARCH_LIMIT);
+  if (!words.length) return rows.slice().sort(byDate).slice(0, SEARCH_LIMIT);
   const out: { r: Transaction; score: number }[] = [];
   for (const r of rows) {
     const amt = r.amount == null ? '' : (r.amount / 100).toFixed(2);
@@ -53,6 +67,6 @@ export function searchTransactions(rows: Transaction[], query: string, lookup: L
     }
     if (ok) out.push({ r, score });
   }
-  out.sort((a, b) => b.score - a.score || recentFirst(a.r, b.r));
+  out.sort((a, b) => (order === 'newest' ? 0 : b.score - a.score) || byDate(a.r, b.r));
   return out.slice(0, SEARCH_LIMIT).map((x) => x.r);
 }

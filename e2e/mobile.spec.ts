@@ -3,7 +3,7 @@ import { resetData } from './helpers';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
-test('phones get read-only search and a month-by-month overview', async ({ page }) => {
+test('phones get search and a month-by-month overview', async ({ page }) => {
   await resetData(page, true);
   await page.goto('/#/transactions');
   await page.getByRole('searchbox').fill('city water');
@@ -46,4 +46,20 @@ test('phones say when categories are hidden and can hide or show them', async ({
   await expect(page.getByRole('button', { name: /^Rent/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Utilities/ })).toHaveCount(0);
   await expect(page.getByText('1 category hidden')).toBeVisible();
+});
+
+test('phones set a category by tapping a transaction', async ({ page }) => {
+  await resetData(page, true);
+  await page.goto('/#/transactions');
+  await page.getByRole('searchbox').fill('city water');
+  await expect(page.getByRole('combobox')).toHaveCount(0);
+  await page
+    .getByRole('button', { name: /City Water/ })
+    .first()
+    .click();
+  await page.getByRole('combobox', { name: /City Water/ }).selectOption({ label: 'Rent' });
+  await expect(page.getByRole('listitem').first()).toContainText('Rent');
+  await page.reload();
+  await page.getByRole('searchbox').fill('city water');
+  await expect(page.getByRole('listitem').first()).toContainText('Rent');
 });

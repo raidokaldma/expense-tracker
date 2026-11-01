@@ -12,10 +12,6 @@
   padding: 0;
   list-style: none;
 }
-.list li,
-.categoryTransactions li {
-  padding: 10px 12px;
-}
 .list li + li,
 .categoryTransactions li + li {
   border-top: 1px solid var(--line-soft);
@@ -33,6 +29,10 @@
   white-space: nowrap;
   font-weight: 500;
 }
+.desc,
+.meta {
+  display: block;
+}
 .desc {
   color: var(--ink-3);
   font-style: italic;
@@ -40,6 +40,10 @@
 .meta {
   color: var(--muted);
   font-size: 13px;
+}
+.missing {
+  color: var(--neg-ink);
+  font-weight: 500;
 }
 .none {
   margin: 16px 0;
